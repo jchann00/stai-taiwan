@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html class="dark" lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <title data-i18n="docTitle">DeepFocus - Edge AI 자세 교정 및 집중도 플랫폼 (STAI)</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'surface': '#0c1322',
+            'surface-container-lowest': '#070e1d',
+            'surface-container-low': '#141b2b',
+            'surface-container': '#191f2f',
+            'surface-container-high': '#232a3a',
+            'surface-container-highest': '#2e3545',
+            'primary': '#c3c0ff',
+            'primary-container': '#4f46e5',
+            'secondary': '#4edea3',
+            'secondary-container': '#00a572',
+            'tertiary': '#4cd7f6',
+            'error': '#ffb4ab',
+            'error-container': '#93000a',
+            'on-surface': '#dce2f7',
+            'on-surface-variant': '#c7c4d8',
+            'outline': '#918fa1',
+            'outline-variant': '#464555'
+          },
+          fontFamily: {
+            'headline': ['Plus Jakarta Sans', 'sans-serif'],
+            'body': ['Inter', 'sans-serif'],
+            'timer': ['Space Grotesk', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google MediaPipe Pose CDN (WebGL/WASM 가속) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <!-- TensorFlow.js & COCO-SSD (스마트폰 감지) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+  <!-- i18n Dictionary -->
+  <script src="js/i18n.js"></script>
+
+  <style>
+    @layer base {
+      html, body {
+        background-color: #0c1322;
+        color: #dce2f7;
+        margin: 0;
+        padding: 0;
+        overscroll-behavior-y: none;
+      }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex flex-col min-h-screen">
+
+  <!-- ============================================================== -->
+  <!-- 1. TOP HEADER                                                 -->
+  <!-- ============================================================== -->
+  <header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl border-b border-white/5 shadow-md">
+    <div class="h-16 px-3 md:px-8 flex items-center justify-between gap-2 md:gap-3">
+      <!-- Brand Logo (Click to open Guide Modal) -->
+      <div id="brandLogoContainer" class="flex items-center gap-2 shrink-0 cursor-pointer select-none group" data-i18n-title="brandLogoTitle" title="DeepFocus STAI - 클릭하여 사용법 가이드 보기">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 shrink-0 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-lg sm:text-xl select-none pointer-events-none">self_improvement</span>
+        </div>
+        <div class="hidden md:flex flex-col min-w-0 select-none">
+          <span class="font-headline font-bold text-base md:text-lg text-on-surface tracking-tight flex items-center gap-1.5 truncate">
+            <span data-i18n="brandTitle">DeepFocus</span> 
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-semibold">STAI AI</span>
+          </span>
+          <span class="text-[10px] text-on-surface-variant flex items-center gap-1 truncate" data-i18n="brandSubtitle">
+            Zero-Trust Edge AI • 30+ FPS
+          </span>
+        </div>
+      </div>
+
+      <!-- Right Header Actions (Optimized spacing for mobile to prevent overlap) -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        
+        <!-- Language Switcher (KO / ZH / EN) -->
+        <div class="inline-flex p-0.5 rounded-xl bg-surface-container-high border border-white/5 text-[10px] sm:text-[11px] shrink-0">
+          <button class="lang-btn px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg transition-all" data-lang="ko" title="한국어">🇰🇷 <span class="hidden md:inline">KO</span></button>
+          <button class="lang-btn px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg transition-all" data-lang="zh-TW" title="繁體中文">🇹🇼 <span class="hidden md:inline">TW</span></button>
+          <button class="lang-btn px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg transition-all" data-lang="en" title="English">🇺🇸 <span class="hidden md:inline">EN</span></button>
+        </div>
+
+        <!-- 3-Step App Guide Button (Icon-only on mobile) -->
+        <button id="btnOpenGuideModal" class="w-7 h-7 sm:w-auto sm:px-2.5 sm:py-1.5 rounded-xl bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-300 text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-1 shrink-0" data-i18n-title="guideModalBtnTitle" title="앱 사용 가이드">
+          <span class="material-symbols-outlined text-[15px]">help</span>
+          <span class="hidden sm:inline" data-i18n="appGuideBtn">❓ 사용법</span>
+        </button>
+
+        <!-- Mobile Camera QR Modal Button (Hidden on mobile phones since phone already running on device) -->
+        <button id="btnOpenMobileModal" class="hidden md:flex items-center gap-1 px-2.5 md:px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/10 text-tertiary text-xs font-semibold shadow-sm transition-all" data-i18n-title="mobileModalBtnTitle" title="스마트폰 실제 카메라 연결">
+          <span class="material-symbols-outlined text-[15px]">qr_code_scanner</span>
+          <span data-i18n="mobileConnectBtn">📱 모바일 카메라 연결</span>
+        </button>
+
+        <!-- Auth User Profile / Login Button (Compact circle on small mobile) -->
+        <button id="btnOpenAuthModal" class="w-7 h-7 sm:w-auto sm:px-3 sm:py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest border border-white/10 text-white text-xs font-medium transition-all flex items-center justify-center gap-1.5 shrink-0" data-i18n-title="authModalBtnTitle" title="로그인">
+          <span class="material-symbols-outlined text-[15px] text-tertiary">person</span>
+          <span id="headerUserLabel" class="hidden md:inline" data-i18n="loginBtn">로그인</span>
+        </button>
+
+        <!-- PayPal Pro Upgrade Button (Compact pill on small mobile) -->
+        <button id="btnOpenUpgradeModal" class="px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all flex items-center gap-1 shrink-0">
+          <span class="material-symbols-outlined text-[13px] sm:text-[14px]">diamond</span>
+          <span id="headerPlanBadge" class="text-[11px] sm:text-xs" data-i18n="proPlan">PRO</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- 2. MAIN APP CONTENT CONTAINER                                  -->
+  <!-- ============================================================== -->
+  <main class="flex-1 w-full pt-20 pb-28 max-w-4xl mx-auto px-4 md:px-6">
+
+    <!-- ============================================================ -->
+    <!-- TAB 1: 집중 타이머 HUD (Focus Timer HUD)                       -->
+    <!-- ============================================================ -->
+    <section id="tab-hud" class="tab-content active space-y-4">
+      
+      <!-- Vision Telemetry HUD Card -->
+      <div class="relative w-full rounded-2xl bg-surface-container/90 border border-white/5 p-4 shadow-xl overflow-hidden backdrop-blur-xl">
+        <!-- Telemetry Status Header -->
+        <div class="flex items-center justify-between mb-3 relative z-10">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+            <span class="text-xs text-secondary font-semibold tracking-wide" id="aiStatusLabel" data-i18n="aiVisionActive">실시간 비전 센서 작동 중</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Camera Flip Button (Front / Back) -->
+            <button id="btnFlipCamera" class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-highest hover:bg-surface-container-high text-on-surface text-xs border border-white/10 transition-all" title="전면/후면 카메라 전환" data-i18n-title="btnFlipCameraTitle">
+              <span class="material-symbols-outlined text-[14px]">flip_camera_ios</span>
+              <span class="hidden sm:inline" data-i18n="btnWebcamFlip">전/후면 전환</span>
+            </button>
+
+            <!-- Camera Toggle Button -->
+            <button id="btnToggleWebcam" class="flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-600/30 hover:bg-indigo-600/50 text-primary border border-indigo-500/30 text-xs font-medium transition-all">
+              <span class="material-symbols-outlined text-[14px]">videocam</span>
+              <span id="btnWebcamText" data-i18n="btnWebcamStart">카메라 켜기 (Zero-Trust)</span>
+            </button>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-mono" id="fpsDisplay">30 FPS</span>
+          </div>
+        </div>
+
+        <!-- Vision Viewport (Webcam + HUD Skeleton Canvas) -->
+        <div class="relative w-full h-44 rounded-xl bg-surface-container-lowest overflow-hidden flex items-center justify-center border border-white/5">
+          <!-- Background Video (Mirror / playsinline for Mobile iOS) -->
+          <video id="webcamVideo" class="absolute inset-0 w-full h-full object-cover transform -scale-x-100" playsinline webkit-playsinline autoplay muted></video>
+          <!-- Stylized fallback image if webcam is off -->
+          <div id="videoFallback" class="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpKffxhyz0WlWtuDdlQB_NuBpOUc8T17XMAmfbYPD0yX6FMfvmfKwn2-uSGD9XtvBoywWL-fGjjwsItMayuNdXGyf2X0pYxm7dnJD-NqjkTjxKtxDt9rva535WALNnubfIBDfJAADuIopQh5nattGpwF4i_6M0wtoFKMg8Jz5A-i_YKGJ3WxiQeJOLBkSWQuINSp7wkeMNcIfAq2nnlQT5YzETBVmHEXTISryP4-8_3UCZ0663erwZ');"></div>
+
+          <!-- Live Overlay Canvas (33 Keypoints & Vectors) -->
+          <canvas id="poseCanvas" width="640" height="360" class="absolute inset-0 w-full h-full transform -scale-x-100 pointer-events-none z-10"></canvas>
+
+          <!-- Warning Overlays from Continuous Temporal Buffer -->
+          <div id="bufferWarningBanner" class="hidden absolute inset-0 bg-error-container/85 backdrop-blur-md z-20 flex flex-col items-center justify-center p-4 text-center">
+            <span class="material-symbols-outlined text-4xl text-error mb-2 animate-bounce">warning</span>
+            <p class="font-bold text-base text-white" id="bufferWarningText" data-i18n="violationFaceMissing">얼굴 미감지 3초 경과 - 타이머 일시정지</p>
+            <p class="text-xs text-on-error-container mt-1" data-i18n="bufferReturnNotice">올바른 위치로 복귀하면 자동으로 타이머가 재개됩니다.</p>
+          </div>
+
+          <!-- Telemetry Badges (Floating on bottom) -->
+          <div class="absolute bottom-2.5 left-3 flex items-center gap-2 px-2.5 py-1 rounded-lg bg-surface-container-lowest/80 backdrop-blur-md border border-white/5 z-10">
+            <span class="text-xs font-bold text-secondary font-mono" id="hudNeckAngle" data-i18n="statNeck">목 기울기 3°</span>
+            <span class="text-[11px] text-on-surface-variant" id="hudNeckStatus" data-i18n="hudNeckOptimalStatus">• 정상</span>
+          </div>
+          <div class="absolute bottom-2.5 right-3 flex items-center gap-2 px-2.5 py-1 rounded-lg bg-surface-container-lowest/80 backdrop-blur-md border border-white/5 z-10">
+            <span class="text-xs font-bold text-tertiary font-mono" id="hudDistance" data-i18n="statDist">거리 55cm</span>
+            <span class="text-[11px] text-on-surface-variant" id="hudDistanceStatus" data-i18n="hudDistanceOptimal">• 최적</span>
+          </div>
+        </div>
+
+        <!-- Live Status Ribbon -->
+        <div class="mt-3 flex items-center justify-between text-xs pt-1 border-t border-white/5">
+          <div class="flex items-center gap-1.5 text-on-surface truncate">
+            <span class="material-symbols-outlined text-base text-secondary" style="font-variation-settings: 'FILL' 1;">verified</span>
+            <span id="guardStatusText" data-i18n="guardNormal">바른 자세 유지 중 • 순수 집중 시간 누적</span>
+          </div>
+          <span class="text-secondary font-semibold font-mono" id="focusAccRate" data-i18n="rateNormal">+1초/초</span>
+        </div>
+      </div>
+
+      <!-- Customizable Target Goal Card (Click to Edit) -->
+      <div class="flex items-center justify-between px-1">
+        <button id="btnOpenGoalModal" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/90 hover:bg-surface-container-highest border border-white/10 text-xs font-medium text-white transition-all shadow-sm group" data-i18n-title="btnOpenGoalModalTitle" title="클릭하여 목표 수정">
+          <span class="text-secondary">🎯</span>
+          <span id="displayTaskName" data-i18n="taskNameDefault">오늘의 집중 공부 & 독서</span>
+          <span class="material-symbols-outlined text-[13px] text-on-surface-variant group-hover:text-white transition-colors">edit</span>
+        </button>
+        <button id="btnOpenDdayModal" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-container/20 hover:bg-primary-container/30 border border-primary/20 text-primary text-xs font-bold transition-all shadow-sm" data-i18n-title="btnOpenDdayModalTitle" title="클릭하여 D-Day 수정">
+          <span class="material-symbols-outlined text-xs">calendar_today</span>
+          <span id="displayTaskGoal" data-i18n="taskGoalDefault">D-Day 목표 달성</span>
+        </button>
+      </div>
+
+      <!-- Zen Giant Focus Timer Display -->
+      <div class="relative w-full rounded-2xl bg-surface-container-low border border-white/5 p-6 flex flex-col items-center justify-center text-center shadow-2xl overflow-hidden">
+        <div class="flex items-center gap-2 mb-1 text-xs text-on-surface-variant uppercase tracking-widest font-mono">
+          <span data-i18n="currentSession">CURRENT SESSION</span>
+          <span class="w-1 h-1 rounded-full bg-outline"></span>
+          <span class="text-secondary font-semibold" id="sessionTrustScore"><span data-i18n="trustScoreLabel">집중도</span> 98.4%</span>
+        </div>
+
+        <!-- Giant Timer Number (Count-Up from 00:00:00) -->
+        <div class="font-timer text-5xl md:text-6xl text-white font-bold tracking-tight my-2 tabular-nums drop-shadow-[0_0_24px_rgba(78,222,163,0.18)]" id="timerDisplay">
+          00:00:00
+        </div>
+
+        <!-- Daily Cumulative Goal (5 Hours Goal) -->
+        <div class="w-full max-w-xs mt-2 flex flex-col gap-1.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-on-surface-variant"><span data-i18n="pureFocusToday">오늘 순수 집중</span> <strong class="text-white" id="todayMinutesText">0<span data-i18n="unitHour">시간</span> 0<span data-i18n="unitMinute">분</span></strong></span>
+            <span class="text-secondary font-semibold font-mono" id="todayProgressText">0% <span data-i18n="hoursGoal">/ 5시간</span></span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+            <div id="todayProgressBar" class="h-full rounded-full bg-gradient-to-r from-primary-container via-primary to-secondary transition-all duration-500" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Timer Controls (Play / Pause / Reset / SNS Viral) -->
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+          <button id="btnPausePlay" class="flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-900 font-bold text-sm shadow-lg shadow-emerald-500/20 hover:brightness-110 transition-all">
+            <span class="material-symbols-outlined text-lg">play_arrow</span>
+            <span id="btnPauseText" data-i18n="btnStartStudy">공부 시작</span>
+          </button>
+          <button id="btnResetTimer" class="flex items-center gap-1 px-3 py-2.5 rounded-xl bg-surface-container-high border border-white/10 hover:bg-surface-container-highest text-xs font-medium text-on-surface-variant hover:text-white transition-all" title="타이머 초기화">
+            <span class="material-symbols-outlined text-base">restart_alt</span>
+            <span data-i18n="btnResetLabel">초기화</span>
+          </button>
+          <button id="btnOpenViralModal" class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600/30 to-pink-600/30 hover:from-purple-600/50 hover:to-pink-600/50 border border-purple-500/30 text-purple-200 text-xs font-semibold shadow-md transition-all">
+            <span class="material-symbols-outlined text-base text-pink-400">share</span>
+            <span data-i18n="btnShareSNS">SNS 인증 (9:16 Shorts)</span>
+          </button>
+          <button id="btnShieldQuick" class="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-surface-container-high border border-white/10 hover:border-white/20 text-xs font-semibold text-amber-300 transition-all">
+            <span class="material-symbols-outlined text-base text-amber-400">shield</span>
+            <span data-i18n="btnShieldQuick">방어 쉴드</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Anti-Fake-Study Guard Toggle Switch -->
+      <div class="w-full rounded-xl bg-surface-container/80 border border-white/5 p-4 flex items-center justify-between gap-3">
+        <div class="flex items-start gap-3 min-w-0">
+          <div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-secondary">
+            <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="text-sm font-semibold text-white truncate" data-i18n="autoLockTitle">집중 이탈 자동 잠금 (Continuous Temporal Buffer)</span>
+            <span class="text-xs text-on-surface-variant" data-i18n="autoLockDesc">얼굴 이탈(3초) 또는 스마트폰 감지 시 타이머 일시정지 & 화면 블러</span>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+          <input checked="" class="sr-only peer" id="autoLockToggle" type="checkbox"/>
+          <div class="w-11 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-secondary-container transition-colors duration-200"></div>
+          <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 peer-checked:translate-x-5 shadow-sm"></div>
+        </label>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 2: 자세 피드백 (Posture Feedback & Progressive Blur)       -->
+    <!-- ============================================================ -->
+    <section id="tab-posture" class="tab-content space-y-4">
+      
+      <!-- Coaching Alert HUD Card -->
+      <div id="postureCoachCard" class="w-full rounded-2xl bg-surface-container/90 border border-white/5 p-5 shadow-xl backdrop-blur-xl relative overflow-hidden transition-all duration-500">
+        <div id="postureGlowBar" class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-indigo-500"></div>
+        
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="flex items-center gap-3">
+            <div id="postureIconBox" class="w-10 h-10 rounded-full bg-secondary/15 flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined text-2xl">check_circle</span>
+            </div>
+            <div>
+              <span id="postureLevelBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-secondary/20 text-secondary font-bold" data-i18n="postureCoachBadgeGood">
+                자세 양호 • 최적 상태
+              </span>
+              <h3 id="postureCoachTitle" class="text-base font-bold text-white mt-1" data-i18n="postureCoachTitleGood">
+                우수한 자세를 유지하고 있습니다
+              </h3>
+            </div>
+          </div>
+          <span class="text-xs px-2 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-mono" id="postureStrainWeight">
+            <span data-i18n="cervicalStrain">경추 하중</span>: 4.8 kg
+          </span>
+        </div>
+
+        <p id="postureCoachAdvice" class="text-xs text-on-surface-variant leading-relaxed" data-i18n="postureCoachAdviceGood">
+          어깨와 귀가 중심축에 정렬되어 있습니다. 45분 집중 후 2분 스트레칭을 권장합니다.
+        </p>
+
+        <!-- Angle Gauges -->
+        <div class="grid grid-cols-3 gap-3 mt-4 pt-3 border-t border-white/5">
+          <div class="p-2.5 rounded-xl bg-surface-container-lowest text-center">
+            <span class="text-[11px] text-on-surface-variant block" data-i18n="statNeck">목 전방 기울기</span>
+            <strong class="text-base text-secondary font-mono" id="statNeckAngle">3°</strong>
+          </div>
+          <div class="p-2.5 rounded-xl bg-surface-container-lowest text-center">
+            <span class="text-[11px] text-on-surface-variant block" data-i18n="statShoulder">양 어깨 높낮이차</span>
+            <strong class="text-base text-tertiary font-mono" id="statShoulderAngle">1°</strong>
+          </div>
+          <div class="p-2.5 rounded-xl bg-surface-container-lowest text-center">
+            <span class="text-[11px] text-on-surface-variant block" data-i18n="statDist">화면 거리</span>
+            <strong class="text-base text-primary font-mono" id="statDistance">55 cm</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. Real-time Spine & Cervical Alignment Visualizer -->
+      <div class="w-full rounded-2xl bg-surface-container/90 border border-white/5 p-5 shadow-xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">accessibility_new</span>
+            <h3 class="text-sm font-bold text-white" data-i18n="postureVisualizerTitle">실시간 척추 & 경추 정렬 시각화</h3>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="flex items-center gap-1.5 text-on-surface-variant">
+              <span class="w-2 h-2 rounded-full bg-white/40"></span>
+              <span data-i18n="idealSpineAxis">이상적 수직축 (0°)</span>
+            </span>
+            <span class="flex items-center gap-1.5 text-secondary font-medium">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              <span data-i18n="currentNeckAxis">현재 측정 각도</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Interactive Biomechanical Spine Graphic (Head, Spine, Shoulders & Arms) -->
+        <div class="relative w-full h-48 rounded-xl bg-surface-container-lowest/80 border border-white/5 flex items-center justify-center overflow-hidden">
+          <svg id="spineVisualizerSvg" viewBox="0 0 320 200" class="w-full h-full max-w-sm">
+            <!-- Background Grid Lines -->
+            <line x1="160" y1="10" x2="160" y2="185" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <line x1="40" y1="130" x2="280" y2="130" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            
+            <!-- Torso / Shoulders Base -->
+            <path d="M 110 145 Q 160 135 210 145 L 215 175 L 105 175 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+            
+            <!-- Ergonomic Desk / Keyboard Guide Line -->
+            <line x1="75" y1="175" x2="245" y2="175" stroke="rgba(255,255,255,0.12)" stroke-width="2" stroke-dasharray="3 3"/>
+            <text id="spineDeskGuideText" data-i18n="deskAlignmentGuide" x="160" y="192" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.4)" font-family="monospace">
+              데스크 & 키보드 90° 정렬선
+            </text>
+
+            <!-- Shoulder Line -->
+            <line id="spineShoulderLine" x1="110" y1="135" x2="210" y2="135" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+            <circle id="spineShoulderLeftDot" cx="110" cy="135" r="4.5" fill="#38bdf8"/>
+            <circle id="spineShoulderRightDot" cx="210" cy="135" r="4.5" fill="#38bdf8"/>
+            
+            <!-- Left Arm Assembly (Upper Arm -> Elbow -> Forearm -> Hand) -->
+            <g id="spineArmLeftGroup">
+              <line id="spineArmLeftUpper" x1="110" y1="135" x2="85" y2="165" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/>
+              <circle id="spineElbowLeftDot" cx="85" cy="165" r="3.5" fill="#60a5fa"/>
+              <line id="spineArmLeftLower" x1="85" y1="165" x2="120" y2="173" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+              <circle id="spineHandLeftDot" cx="120" cy="173" r="3" fill="#93c5fd"/>
+            </g>
+
+            <!-- Right Arm Assembly (Upper Arm -> Elbow -> Forearm -> Hand) -->
+            <g id="spineArmRightGroup">
+              <line id="spineArmRightUpper" x1="210" y1="135" x2="235" y2="165" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/>
+              <circle id="spineElbowRightDot" cx="235" cy="165" r="3.5" fill="#60a5fa"/>
+              <line id="spineArmRightLower" x1="235" y1="165" x2="200" y2="173" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round"/>
+              <circle id="spineHandRightDot" cx="200" cy="173" r="3" fill="#93c5fd"/>
+            </g>
+
+            <!-- Spine Column (Lower) -->
+            <path d="M 160 135 L 160 115" stroke="#94a3b8" stroke-width="4.5" stroke-linecap="round"/>
+            
+            <!-- Pivoting Neck & Head Assembly (Rotates around (160, 115)) -->
+            <g id="spineVisualizerNeckGroup" transform="rotate(3, 160, 115)" class="transition-transform duration-300 ease-out">
+              <!-- Measured Neck Axis Line -->
+              <line x1="160" y1="115" x2="160" y2="45" stroke="#34d399" stroke-width="3.5" stroke-linecap="round" id="spineNeckLine"/>
+              <!-- Cervical Vertebrae Dots -->
+              <circle cx="160" cy="100" r="3" fill="#34d399" class="spine-dot"/>
+              <circle cx="160" cy="85" r="3" fill="#34d399" class="spine-dot"/>
+              <circle cx="160" cy="70" r="3" fill="#34d399" class="spine-dot"/>
+              <!-- Head / Cranium -->
+              <circle id="spineHeadCircle" cx="160" cy="45" r="18" fill="rgba(52, 211, 153, 0.2)" stroke="#34d399" stroke-width="2.5"/>
+              <!-- Gaze Direction Indicator (Arrow) -->
+              <line id="spineGazeLine" x1="178" y1="45" x2="198" y2="48" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 2"/>
+              <circle cx="198" cy="48" r="2.5" fill="#34d399" class="spine-dot"/>
+            </g>
+
+            <!-- Angle Arc Overlay -->
+            <text id="spineAngleOverlayText" data-i18n="spineAngleOptimal" x="160" y="24" text-anchor="middle" font-size="12" fill="#34d399" font-weight="bold" font-family="monospace">
+              경추 기울기: 3° (최적 정렬)
+            </text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 2. Targeted 10-Second Posture Relief Stretch Guide -->
+      <div class="w-full rounded-2xl bg-surface-container/90 border border-white/5 p-5 shadow-xl backdrop-blur-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400 text-xl">self_improvement</span>
+            <h3 class="text-sm font-bold text-white" data-i18n="stretchGuideTitle">즉각 자세 교정 스트레칭 처방</h3>
+          </div>
+          <button id="btnStart10sStretch" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition-all">
+            <span class="material-symbols-outlined text-base">timer</span>
+            <span id="btn10sStretchLabel" data-i18n="btnStretchStart">⚡ 10초 리셋 스트레칭 시작</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Exercise 1: Chin Tuck -->
+          <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-white/5 flex gap-3 items-start">
+            <div class="w-9 h-9 rounded-lg bg-secondary/15 flex items-center justify-center text-secondary shrink-0 mt-0.5">
+              <span class="material-symbols-outlined text-lg">straighten</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white mb-1" data-i18n="chinTuckTitle">턱 수평으로 당기기 (Chin Tuck)</h4>
+              <p class="text-[11px] text-on-surface-variant leading-relaxed" data-i18n="chinTuckDesc">
+                턱을 가볍게 뒤로 밀어 넣어 목 뒤쪽을 길게 늘려주세요. 경추 C1~C7의 압박이 즉시 완화됩니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- Exercise 2: Scapular Retraction -->
+          <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-white/5 flex gap-3 items-start">
+            <div class="w-9 h-9 rounded-lg bg-tertiary/15 flex items-center justify-center text-tertiary shrink-0 mt-0.5">
+              <span class="material-symbols-outlined text-lg">accessibility</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white mb-1" data-i18n="shoulderRollTitle">날개뼈 모으기 & 어깨 펴기</h4>
+              <p class="text-[11px] text-on-surface-variant leading-relaxed" data-i18n="shoulderRollDesc">
+                양쪽 어깨를 뒤로 젖히고 날개뼈를 가볍게 모아 굽은 등을 펴주세요.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 실시간 시야 차단(블러) 페널티 시스템 -->
+      <div class="relative w-full rounded-2xl bg-surface-container-lowest border border-white/5 overflow-hidden shadow-2xl p-5">
+        <!-- Blur Purpose Header Banner -->
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/5 text-xs">
+          <div>
+            <h4 class="text-sm font-bold text-white flex items-center gap-1.5" data-i18n="blurSystemTitle">
+              🎯 실시간 시야 차단(블러) 페널티 시스템
+            </h4>
+            <p class="text-[11px] text-on-surface-variant mt-0.5" data-i18n="blurSystemDesc">
+              고개가 25° 이상 숙여지거나 스마트폰을 보면, 시야가 점진적으로 흐려져 즉시 허리를 펴도록 유도합니다.
+            </p>
+          </div>
+          <span class="text-secondary text-[11px] px-2.5 py-1 rounded-md bg-secondary/10 font-semibold shrink-0" data-i18n="blurSystemBadge">
+            블러 페널티 프리뷰
+          </span>
+        </div>
+
+        <!-- Simulated Reading / Workspace Content that blurs on poor posture -->
+        <div id="blurWorkspaceContent" class="space-y-3 text-xs text-on-surface leading-relaxed transition-all duration-500 ease-out p-3.5 rounded-xl bg-surface-container/40 border border-white/5">
+          <div class="flex items-center justify-between text-xs text-on-surface-variant border-b border-white/5 pb-2">
+            <span class="font-bold text-primary" data-i18n="studyDocTitle">나의 학습 메모 & 독서 시야 공간</span>
+            <span class="text-[11px] text-emerald-400 font-mono" data-i18n="livePreviewBadge">LIVE PREVIEW</span>
+          </div>
+          <p class="text-white/90" data-i18n="studyDocP1">
+            올바른 앉은 자세를 유지하면 뇌 혈류량이 18% 증가하고, 목과 어깨의 근육 피로도를 최대 40%까지 줄일 수 있습니다.
+          </p>
+          <p class="text-on-surface-variant" data-i18n="studyDocP2">
+            자세가 무너지면 이 화면이 실시간으로 흐려져(Progressive Blur), 자연스럽게 허리를 펴도록 시각적 피드백을 제공합니다.
+          </p>
+          <div class="p-2.5 rounded-lg bg-primary/10 border border-primary/20 flex items-center gap-2 text-xs">
+            <span class="material-symbols-outlined text-primary text-sm">lightbulb</span>
+            <span class="text-primary-light" data-i18n="blurGuideNote">인체공학 표준: 모니터 상단을 눈높이에 맞추면 목 피로도가 40% 감소합니다.</span>
+          </div>
+        </div>
+
+        <!-- Manual Progressive Blur Test Slider -->
+        <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between gap-4 text-xs">
+          <span class="text-on-surface-variant shrink-0" data-i18n="blurSliderLabel">블러 효과 강도 수동 테스트:</span>
+          <input type="range" id="blurSlider" min="0" max="20" value="0" class="w-full accent-emerald-400 cursor-pointer"/>
+          <span id="blurValueLabel" class="font-mono text-secondary shrink-0">0px</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 3: 습관 연속 기록 (Habit Streak & Shield)                 -->
+    <!-- ============================================================ -->
+    <section id="tab-streak" class="tab-content space-y-4">
+      
+      <!-- Hero Streak Card -->
+      <div class="w-full rounded-2xl bg-gradient-to-br from-indigo-900/40 via-surface-container to-surface-container p-6 border border-white/5 shadow-xl flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 flex items-center justify-center text-3xl shadow-lg shadow-orange-500/20">
+            🔥
+          </div>
+          <div>
+            <span class="text-xs uppercase tracking-wider text-amber-400 font-bold" data-i18n="currentStreakLabel">CURRENT STREAK</span>
+            <h2 class="text-3xl font-headline font-bold text-white mt-0.5" id="streakHeroTitle" data-i18n="streakHeroTitle">연속 집중 18일 달성</h2>
+            <p class="text-xs text-on-surface-variant mt-1" data-i18n="streakHeroDesc">상위 5.8%의 고효율 수험생 및 연구원 집중 페이스</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-on-surface-variant" data-i18n="trustScoreLabel">집중도</span>
+          <div class="text-2xl font-mono font-bold text-secondary">98.4%</div>
+        </div>
+      </div>
+
+      <!-- Freeze Shield Inventory Card -->
+      <div class="w-full rounded-2xl bg-surface-container/90 border border-white/5 p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-2xl text-amber-400">shield</span>
+            <div>
+              <h3 class="text-sm font-bold text-white" data-i18n="shieldTitle">연속 기록 동결 쉴드 (Freeze Shield)</h3>
+              <p class="text-xs text-on-surface-variant" data-i18n="shieldDesc">부득이한 사정으로 일일 5시간 목표 미달성 시 쉴드가 자동 소모되어 연속 일수를 보호합니다.</p>
+            </div>
+          </div>
+          <span class="text-xs px-3 py-1 rounded-full bg-amber-400/15 text-amber-300 font-bold" id="shieldCountBadge" data-i18n="shieldRemaining">
+            잔여 2개
+          </span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="btnUseShield" class="flex-1 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold text-xs transition-all flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-base">verified_user</span>
+            <span data-i18n="btnUseShield">오늘 하루 쉴드 적용하기</span>
+          </button>
+          <button id="btnOpenUpgradeModal2" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">add</span>
+            <span data-i18n="btnBuyShield">쉴드 충전 (+3)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 7-Day Habit Activity Calendar -->
+      <div class="w-full rounded-2xl bg-surface-container-low border border-white/5 p-5 shadow-xl">
+        <h4 class="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3" data-i18n="weekCalendarTitle">이번 주 집중 달성 현황</h4>
+        <div class="grid grid-cols-7 gap-2" id="weekCalendarGrid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- TAB 4: 온라인 자습실 (Study-With-Me Room)                     -->
+    <!-- ============================================================ -->
+    <section id="tab-room" class="tab-content space-y-4">
+      
+      <!-- Room Header Strip -->
+      <div class="w-full rounded-2xl bg-surface-container p-5 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="min-w-0">
+          <span class="text-xs text-secondary font-semibold flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            <span id="roomOnlineCount" data-i18n="roomOnlineCount">실시간 집중 중 (342명 접속)</span>
+          </span>
+          <h2 class="text-base sm:text-lg font-headline font-bold text-white mt-0.5 truncate" id="roomOnlineTitle" data-i18n="room1Title">타이베이 & 서울 고강도 자습실 #04</h2>
+          <p class="text-xs text-on-surface-variant mt-0.5 truncate" id="roomOnlineDesc" data-i18n="room1Desc">국가고시, 로스쿨, 연구원 수험생 전용</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="btnInviteRoom" class="px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-xs font-semibold text-indigo-200 transition-all flex items-center gap-1 shadow-sm">
+            <span class="material-symbols-outlined text-[15px]">person_add</span>
+            <span data-i18n="btnInviteRoom">친구 초대</span>
+          </button>
+          <button id="btnCreateRoom" class="px-3 py-1.5 rounded-xl bg-secondary/20 hover:bg-secondary/30 border border-secondary/40 text-xs font-semibold text-secondary transition-all flex items-center gap-1 shadow-sm">
+            <span class="material-symbols-outlined text-[15px]">add_circle</span>
+            <span data-i18n="btnCreateRoom">방 만들기</span>
+          </button>
+          <button id="btnChangeRoom" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/10 text-xs font-semibold text-white transition-all flex items-center gap-1 shadow-sm" data-i18n="changeRoomBtn">
+            <span class="material-symbols-outlined text-[15px] text-tertiary">swap_horiz</span>
+            <span data-i18n="changeRoomBtn">방 변경</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Peer Avatars Grid (Clickable interactive peer cards) -->
+      <div id="peerGrid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <!-- Dynamically rendered by app.js with click-to-cheer interaction -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- 3. BOTTOM TAB NAVIGATION                                       -->
+  <!-- ============================================================== -->
+  <nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-white/5 shadow-2xl">
+    <div class="grid grid-cols-4 items-center h-16 max-w-lg mx-auto px-2">
+      <!-- Tab 1 -->
+      <button class="nav-tab active flex flex-col items-center justify-center h-14 rounded-xl text-secondary transition-all" data-target="tab-hud">
+        <span class="material-symbols-outlined text-2xl">timer</span>
+        <span class="text-[11px] font-medium mt-0.5" data-i18n="tabHud">집중 타이머</span>
+      </button>
+
+      <!-- Tab 2 -->
+      <button class="nav-tab flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-white transition-all" data-target="tab-posture">
+        <span class="material-symbols-outlined text-2xl">accessibility_new</span>
+        <span class="text-[11px] font-medium mt-0.5" data-i18n="tabPosture">자세 피드백</span>
+      </button>
+
+      <!-- Tab 3 -->
+      <button class="nav-tab flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-white transition-all" data-target="tab-streak">
+        <span class="material-symbols-outlined text-2xl">local_fire_department</span>
+        <span class="text-[11px] font-medium mt-0.5" data-i18n="tabStreak">습관 기록</span>
+      </button>
+
+      <!-- Tab 4 -->
+      <button class="nav-tab flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-white transition-all" data-target="tab-room">
+        <span class="material-symbols-outlined text-2xl">groups</span>
+        <span class="text-[11px] font-medium mt-0.5" data-i18n="tabRoom">온라인 자습실</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============================================================== -->
+  <!-- 4. MOBILE CAMERA QR MODAL (핸드폰 카메라 연결 모달)               -->
+  <!-- ============================================================== -->
+  <div id="mobileModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+        <h3 class="text-base font-headline font-bold text-white flex items-center gap-1.5" data-i18n="mobileModalTitle">
+          📱 스마트폰 실제 카메라 테스트
+        </h3>
+        <button id="btnCloseMobileModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <p class="text-xs text-on-surface-variant mb-4" data-i18n="mobileModalDesc">
+        스마트폰 기본 카메라로 아래 QR 코드를 스캔하면 브라우저에서 즉시 실행됩니다.
+      </p>
+
+      <!-- QR Code Image Container -->
+      <div class="bg-white p-3 rounded-2xl inline-block shadow-lg mb-4">
+        <img id="mobileQrImg" alt="Mobile QR Code" class="w-48 h-48 object-contain mx-auto" src=""/>
+      </div>
+
+      <!-- URL Copy Box -->
+      <div class="bg-surface-container-lowest p-2.5 rounded-xl border border-white/5 mb-3 flex items-center justify-between gap-2 text-left">
+        <span id="mobileUrlText" class="text-[11px] font-mono text-tertiary truncate select-all">...</span>
+        <button id="btnCopyMobileUrl" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold shrink-0" data-i18n="mobileCopyBtn">
+          복사
+        </button>
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-indigo-950/40 border border-indigo-500/20 text-[11px] text-indigo-300 leading-relaxed text-left mb-4" data-i18n="mobileGuideHttps">
+        💡 안내: 스마트폰 브라우저(iOS Safari, Android Chrome) 보안 규정상 웹캠 사용은 HTTPS 연결이 필수이며, 본 링크는 안전한 HTTPS로 암호화되어 있습니다.
+      </div>
+
+      <button id="btnCloseMobileModal2" class="w-full py-2.5 rounded-xl bg-surface-container-highest hover:bg-surface-container text-white text-xs font-semibold" data-i18n="mobileClose">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 5. PAYPAL CHECKOUT & SUBSCRIPTION MODAL                         -->
+  <!-- ============================================================== -->
+  <div id="paypalModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-lg w-full p-6 shadow-2xl max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <h2 class="text-lg font-headline font-bold text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-indigo-400">workspace_premium</span>
+            <span data-i18n="modalUpgradeTitle">STAI Pro 요금제 멤버십</span>
+          </h2>
+          <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="modalUpgradeDesc">자세 교정 AI 실시간 코칭 & SNS 타임랩스 잠금 해제</p>
+        </div>
+        <button id="btnCloseModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Controls: Currency & Billing Cycle Switcher -->
+      <div class="flex flex-wrap items-center justify-between gap-3 my-4 p-2 rounded-xl bg-surface-container-lowest border border-white/5">
+        <!-- Monthly vs Yearly Toggle -->
+        <div class="inline-flex p-1 rounded-lg bg-surface-container border border-white/5 text-xs">
+          <button id="btnCycleMonthly" class="cycle-btn active px-3 py-1.5 rounded-md bg-indigo-600 text-white font-semibold transition-all" data-i18n="modalCycleMonthly">
+            월간 결제
+          </button>
+          <button id="btnCycleYearly" class="cycle-btn px-3 py-1.5 rounded-md text-on-surface-variant hover:text-white font-semibold transition-all flex items-center gap-1">
+            <span data-i18n="modalCycleYearly">연간 결제</span>
+            <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 font-bold" data-i18n="discount20">20% 할인</span>
+          </button>
+        </div>
+
+        <!-- Currency Switcher -->
+        <div class="inline-flex p-1 rounded-lg bg-surface-container border border-white/5 text-xs">
+          <button class="modal-curr-btn active px-2.5 py-1 rounded-md bg-indigo-600 text-white font-semibold" data-curr="USD" data-i18n="modalCurrUSD">USD ($)</button>
+          <button class="modal-curr-btn px-2.5 py-1 rounded-md text-on-surface-variant font-semibold" data-curr="TWD" data-i18n="modalCurrTWD">TWD (NT$)</button>
+        </div>
+      </div>
+
+      <!-- Plan Options (3 Distinct Selectable Cards) -->
+      <div class="grid grid-cols-3 gap-2.5 mb-4">
+        <!-- Plan 1: Starter -->
+        <div class="plan-option p-3 rounded-xl bg-surface-container border border-white/5 hover:border-white/20 cursor-pointer text-center transition-all" data-plan="starter">
+          <span class="text-xs font-bold text-on-surface-variant block" data-i18n="planStarterTitle">Starter</span>
+          <strong class="text-base text-white font-mono block my-1 plan-price" 
+                  data-usd-m="$4.99/mo" data-usd-y="$3.99/mo"
+                  data-twd-m="NT$149/月" data-twd-y="NT$119/月">$4.99/mo</strong>
+          <span class="text-[10px] text-outline block" data-i18n="planStarterDesc">입문용 • 직장인</span>
+        </div>
+
+        <!-- Plan 2: Pro Focus (Recommended) -->
+        <div class="plan-option selected p-3 rounded-xl bg-surface-container-highest border-2 border-indigo-500 cursor-pointer text-center relative transition-all shadow-lg shadow-indigo-500/10" data-plan="pro">
+          <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[9px] px-2 py-0.5 rounded-full bg-indigo-500 text-white font-bold tracking-wide shadow-sm" data-i18n="planBadgeRecommend">추천 플랜</span>
+          <span class="text-xs font-bold text-indigo-300 block" data-i18n="planProTitle">Pro Focus</span>
+          <strong class="text-base text-white font-mono block my-1 plan-price"
+                  data-usd-m="$9.99/mo" data-usd-y="$7.99/mo"
+                  data-twd-m="NT$299/月" data-twd-y="NT$239/月">$9.99/mo</strong>
+          <span class="text-[10px] text-secondary block" data-i18n="planProDesc">고시/수험생 추천</span>
+        </div>
+
+        <!-- Plan 3: Clinic / Team -->
+        <div class="plan-option p-3 rounded-xl bg-surface-container border border-white/5 hover:border-white/20 cursor-pointer text-center transition-all" data-plan="clinic">
+          <span class="text-xs font-bold text-on-surface-variant block" data-i18n="planClinicTitle">Clinic / Team</span>
+          <strong class="text-base text-white font-mono block my-1 plan-price"
+                  data-usd-m="$29.99/mo" data-usd-y="$23.99/mo"
+                  data-twd-m="NT$899/月" data-twd-y="NT$719/月">$29.99/mo</strong>
+          <span class="text-[10px] text-outline block" data-i18n="planClinicDesc">전문가/클리닉</span>
+        </div>
+      </div>
+
+      <!-- Dynamic Plan Feature Details Box -->
+      <div id="planFeatureBox" class="p-3.5 rounded-xl bg-surface-container-lowest border border-white/5 text-xs mb-4">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
+          <span id="planFeatureTitle" class="font-bold text-indigo-300" data-i18n="planFeatureTitlePro">Pro Focus 멤버십 혜택</span>
+          <span id="planBillingSummary" class="text-[11px] text-on-surface-variant font-mono" data-i18n="billingMonthlySummary">월간 자동 결제 (언제든 취소 가능)</span>
+        </div>
+        <ul id="planFeatureList" class="space-y-1.5 text-on-surface-variant text-[11px]">
+          <li class="flex items-center gap-1.5 text-white" data-i18n="featLandmarks">✓ 33개 관절 3D WorldLandmarks 정밀 추적 (30+ FPS)</li>
+          <li class="flex items-center gap-1.5 text-white" data-i18n="featDebounce">✓ 얼굴 이탈 3초 & 다중 인원 디바운싱 버퍼 엔진</li>
+          <li class="flex items-center gap-1.5 text-white" data-i18n="featPhone">✓ TF.js 스마트폰 딴짓 실시간 감지</li>
+          <li class="flex items-center gap-1.5 text-white" data-i18n="featTimelapse">✓ 9:16 인스타 릴스/쇼츠 공부 타임랩스 비디오 내보내기</li>
+          <li class="flex items-center gap-1.5 text-white" data-i18n="featShields">✓ 연속 기록 방어 쉴드 무제한 제공</li>
+        </ul>
+      </div>
+
+      <!-- Auth warning notice if not logged in -->
+      <div id="paymentAuthNotice" class="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 mb-3 flex items-center justify-between">
+        <span data-i18n="paymentAuthNotice">💡 로그인 후 결제하시면 계정에 안전하게 라이선스가 영구 귀속됩니다.</span>
+        <button id="btnModalQuickLogin" class="underline font-bold shrink-0 ml-2" data-i18n="btnModalQuickLogin">로그인하기</button>
+      </div>
+
+      <!-- PayPal Buttons Mount Container -->
+      <div class="mb-3">
+        <div id="paypal-button-container" class="min-h-[90px] flex items-center justify-center">
+          <div class="text-xs text-on-surface-variant" data-i18n="paypalLoadingText">PayPal 결제 버튼 로드 중...</div>
+        </div>
+      </div>
+
+      <p class="text-[10px] text-center text-outline" data-i18n="modalPayNote">
+        🔒 PayPal Server SDK v2.5 공식 기반 안전 결제 • 변조 방지 서버 검증 정책 적용
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 6. 간편 이메일 로그인 / 회원가입 모달 (AUTH MODAL)               -->
+  <!-- ============================================================== -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+        <h3 class="text-base font-headline font-bold text-white flex items-center gap-1.5" id="authModalTitle">
+          <span class="material-symbols-outlined text-indigo-400">lock</span>
+          <span data-i18n="authModalTitle">간편 로그인</span>
+        </h3>
+        <button id="btnCloseAuthModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Login / Register Tab Switch -->
+      <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-surface-container-lowest border border-white/5 mb-4 text-xs font-semibold text-center">
+        <button id="tabAuthLogin" class="py-1.5 rounded-lg bg-indigo-600 text-white" data-i18n="tabAuthLogin">로그인</button>
+        <button id="tabAuthRegister" class="py-1.5 rounded-lg text-on-surface-variant hover:text-white" data-i18n="tabAuthRegister">간편 가입</button>
+      </div>
+
+      <!-- Form Inputs -->
+      <form id="authForm" class="space-y-3">
+        <div>
+          <label class="text-[11px] text-on-surface-variant block mb-1" data-i18n="labelEmail">이메일 주소</label>
+          <input type="email" id="authEmail" required placeholder="user@example.com" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-white text-xs focus:outline-none focus:border-indigo-500"/>
+        </div>
+        <div>
+          <label class="text-[11px] text-on-surface-variant block mb-1" data-i18n="labelPassword">비밀번호</label>
+          <input type="password" id="authPassword" required placeholder="비밀번호 입력" data-i18n-placeholder="placeholderPassword" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-white text-xs focus:outline-none focus:border-indigo-500"/>
+        </div>
+        <div id="authNameField" class="hidden">
+          <label class="text-[11px] text-on-surface-variant block mb-1" data-i18n="labelName">이름 / 닉네임</label>
+          <input type="text" id="authName" placeholder="예: 김집중" data-i18n-placeholder="placeholderName" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-white text-xs focus:outline-none focus:border-indigo-500"/>
+        </div>
+
+        <button type="submit" id="btnSubmitAuth" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all mt-2" data-i18n="btnSubmitLogin">
+          로그인
+        </button>
+      </form>
+
+      <!-- 1-Click Demo Login Button for Quick Testing -->
+      <div class="mt-3 pt-3 border-t border-white/5 text-center">
+        <button id="btnQuickDemoLogin" class="w-full py-2 rounded-xl bg-surface-container-highest hover:bg-surface-container border border-white/5 text-secondary text-xs font-semibold transition-all flex items-center justify-center gap-1">
+          <span>🚀</span>
+          <span data-i18n="btnDemoLogin">1초 데모 계정으로 바로 체험</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 7. SNS 바이럴 스튜디오 모달 (9:16 Shorts, Reels, Instagram 규격)  -->
+  <!-- ============================================================== -->
+  <div id="viralModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-md w-full p-5 shadow-2xl max-h-[95vh] overflow-y-auto text-center">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+        <h3 class="text-base font-headline font-bold text-white flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-pink-400">movie_creation</span>
+          <span data-i18n="viralModalTitle">SNS 바이럴 스튜디오 (9:16 Shorts/Reels)</span>
+        </h3>
+        <button id="btnCloseViralModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <p class="text-xs text-on-surface-variant mb-3" data-i18n="viralModalDesc">
+        인스타그램 릴스, 유튜브 쇼츠, 틱톡에 완벽 최적화된 9:16 공부 인증 카드를 생성합니다.
+      </p>
+
+      <!-- 9:16 Live Preview Canvas -->
+      <div class="relative w-full aspect-[9/16] max-w-[260px] mx-auto rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-gradient-to-b from-slate-950 via-indigo-950 to-slate-950 p-4 flex flex-col justify-between text-left">
+        <!-- Card Header -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between text-[10px] text-indigo-300 font-mono">
+            <span class="font-bold flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              DEEPFOCUS AI
+            </span>
+            <span id="viralCardDate">2026.10.11</span>
+          </div>
+          <h4 class="text-sm font-bold text-white leading-tight" data-i18n="viralCardHeader">오늘의 고밀도 집중 인증</h4>
+          <span class="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold inline-block" id="viralCardStreak" data-i18n="viralCardStreak">
+            🔥 연속 18일 집중 달성
+          </span>
+        </div>
+
+        <!-- Big Focus Metric -->
+        <div class="my-auto py-2 text-center">
+          <span class="text-[11px] text-on-surface-variant uppercase tracking-widest font-mono block" data-i18n="pureFocusTimeLabel">PURE FOCUS TIME</span>
+          <div class="text-3xl font-timer font-bold text-white tracking-tight my-1 drop-shadow-[0_0_20px_rgba(78,222,163,0.3)]" id="viralTimerTime">
+            01:42:18
+          </div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold">
+            <span id="viralSpineAlignment" data-i18n="viralSpineAlignment">척추 정렬 98.4%</span>
+            <span>•</span>
+            <span id="viralCervicalLoad" data-i18n="viralCervicalLoad">경추 하중 4.8kg</span>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="space-y-2 pt-2 border-t border-white/10 text-[10px]">
+          <div class="flex items-center justify-between">
+            <span class="text-on-surface-variant" data-i18n="viralRankingLabel">전국 고시/연구원 랭킹</span>
+            <strong class="text-amber-300 font-bold font-mono" data-i18n="viralRankingValue">상위 1.2% (RANK #4)</strong>
+          </div>
+          <div class="flex items-center justify-between text-[9px] text-on-surface-variant font-mono">
+            <span>Zero-Trust Edge Biometrics</span>
+            <span>deepfocus.ai</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-4 grid grid-cols-2 gap-2 text-xs font-semibold">
+        <button id="btnDownloadViralImage" class="py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:brightness-110 text-white shadow-lg flex items-center justify-center gap-1">
+          <span class="material-symbols-outlined text-base">download</span>
+          <span data-i18n="btnSaveViralImage">9:16 이미지 저장</span>
+        </button>
+        <button id="btnShareViralWeb" class="py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:brightness-110 text-white shadow-lg flex items-center justify-center gap-1">
+          <span class="material-symbols-outlined text-base">share</span>
+          <span data-i18n="btnShareViralWeb">인스타/SNS 공유</span>
+        </button>
+      </div>
+
+      <button id="btnExportTimelapseClip" class="w-full mt-2 py-2 rounded-xl bg-surface-container-highest hover:bg-surface-container text-secondary text-xs font-semibold flex items-center justify-center gap-1 border border-white/5">
+        <span class="material-symbols-outlined text-base">fast_forward</span>
+        <span data-i18n="btnExportTimelapseClip">⚡ 10초 스터디 타임랩스 비디오 렌더링 내보내기</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 7-1. 온라인 자습실 방 변경 모달 (ROOM SWITCH MODAL)              -->
+  <!-- ============================================================== -->
+  <div id="roomModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <h3 class="text-base font-headline font-bold text-white flex items-center gap-1.5" data-i18n="roomSwitchTitle">
+            🏛️ 집중 자습실 선택
+          </h3>
+          <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="roomSwitchDesc">원하는 목표와 집중 분위기의 방을 선택하세요.</p>
+        </div>
+        <button id="btnCloseRoomModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Quick Join via Invite Code -->
+      <div class="p-3 rounded-xl bg-surface-container border border-white/5 space-y-2">
+        <label class="text-[11px] font-semibold text-secondary flex items-center gap-1" data-i18n="enterByCodeTitle">
+          <span>🔑 초대 코드로 빠른 입장</span>
+        </label>
+        <div class="flex gap-2">
+          <input type="text" id="inputJoinByCode" class="flex-1 px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-white/10 text-xs text-white placeholder:text-on-surface-variant focus:outline-none focus:border-secondary uppercase" data-i18n-placeholder="enterByCodePlaceholder" placeholder="초대 코드 입력 (예: STAI-8492)" />
+          <button id="btnSubmitJoinByCode" class="px-3 py-1.5 rounded-lg bg-secondary text-surface text-xs font-bold hover:brightness-110 transition-all shrink-0" data-i18n="btnEnterByCode">
+            입장
+          </button>
+        </div>
+      </div>
+
+      <!-- My Created Rooms (if any) -->
+      <div id="myRoomsWrapper" class="space-y-2 hidden">
+        <h4 class="text-xs font-bold text-amber-300 flex items-center gap-1" data-i18n="myRoomsTitle">
+          👑 내가 개설한 자습실
+        </h4>
+        <div id="myRoomsList" class="space-y-2"></div>
+      </div>
+
+      <!-- Public Rooms List -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold text-on-surface-variant" data-i18n="publicRoomsTitle">
+          🏛️ 추천 공용 자습실
+        </h4>
+        <div class="space-y-2.5" id="roomOptionsList">
+          <!-- Room 1 -->
+          <div class="p-3.5 rounded-xl bg-surface-container-lowest border-2 border-secondary hover:border-secondary cursor-pointer transition-all flex items-center justify-between group room-select-item" data-room-id="1">
+            <div>
+              <span class="text-xs font-bold text-white block group-hover:text-secondary transition-colors" data-i18n="room1Title">타이베이 & 서울 고강도 자습실 #04</span>
+              <span class="text-[11px] text-on-surface-variant block mt-0.5" data-i18n="room1Desc">국가고시, 로스쿨, 연구원 수험생 전용</span>
+            </div>
+            <span class="text-xs font-mono text-secondary font-semibold shrink-0" data-i18n="room1CountText">342명 🟢</span>
+          </div>
+
+          <!-- Room 2 -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/5 hover:border-white/20 cursor-pointer transition-all flex items-center justify-between group room-select-item" data-room-id="2">
+            <div>
+              <span class="text-xs font-bold text-white block group-hover:text-tertiary transition-colors" data-i18n="room2Title">도쿄 & 실리콘밸리 코딩/AI 집중실 #02</span>
+              <span class="text-[11px] text-on-surface-variant block mt-0.5" data-i18n="room2Desc">개발자 알고리즘 코딩테스트 및 논문 리딩</span>
+            </div>
+            <span class="text-xs font-mono text-tertiary font-semibold shrink-0" data-i18n="room2CountText">289명 🟢</span>
+          </div>
+
+          <!-- Room 3 -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/5 hover:border-white/20 cursor-pointer transition-all flex items-center justify-between group room-select-item" data-room-id="3">
+            <div>
+              <span class="text-xs font-bold text-white block group-hover:text-primary transition-colors" data-i18n="room3Title">의치한약수 수험생 심야 자습실 #01</span>
+              <span class="text-[11px] text-on-surface-variant block mt-0.5" data-i18n="room3Desc">순공 12시간 달성 목표의 침묵 자습실</span>
+            </div>
+            <span class="text-xs font-mono text-primary font-semibold shrink-0" data-i18n="room3CountText">512명 🟢</span>
+          </div>
+
+          <!-- Room 4 -->
+          <div class="p-3.5 rounded-xl bg-surface-container border border-white/5 hover:border-white/20 cursor-pointer transition-all flex items-center justify-between group room-select-item" data-room-id="4">
+            <div>
+              <span class="text-xs font-bold text-white block group-hover:text-amber-300 transition-colors" data-i18n="room4Title">글로벌 얼리버드 새벽 5시 기상 스터디실 #07</span>
+              <span class="text-[11px] text-on-surface-variant block mt-0.5" data-i18n="room4Desc">기상 인증 및 아침 첫 집중 2시간 달성</span>
+            </div>
+            <span class="text-xs font-mono text-amber-300 font-semibold shrink-0" data-i18n="room4CountText">198명 🟢</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 7-3. 나만의 자습실 개설 모달 (CREATE ROOM MODAL)                 -->
+  <!-- ============================================================== -->
+  <div id="createRoomModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <h3 class="text-base font-headline font-bold text-white flex items-center gap-1.5" data-i18n="createRoomTitle">
+            🏛️ 나만의 집중 자습실 개설
+          </h3>
+          <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="createRoomDesc">친구, 스터디원과 함께할 실시간 AI 자세 교정 자습실을 만드세요.</p>
+        </div>
+        <button id="btnCloseCreateRoomModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-white mb-1" data-i18n="inputRoomNameLabel">자습실 이름</label>
+          <input type="text" id="newRoomName" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-white/10 text-xs text-white placeholder:text-on-surface-variant focus:outline-none focus:border-secondary" data-i18n-placeholder="inputRoomNamePlaceholder" placeholder="예: 대만대 의대 & 수험생 심야 자습실" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-white mb-1" data-i18n="inputRoomCategoryLabel">카테고리</label>
+          <div class="grid grid-cols-2 gap-2" id="newRoomCategoryGrid">
+            <button type="button" class="category-choice-btn active px-3 py-2 rounded-xl bg-indigo-600/30 border border-indigo-500 text-indigo-200 text-xs font-semibold text-left transition-all" data-cat="exam" data-i18n="catExam">
+              🎓 수험/고시/의치한
+            </button>
+            <button type="button" class="category-choice-btn px-3 py-2 rounded-xl bg-surface-container border border-white/10 text-on-surface-variant text-xs font-semibold text-left transition-all" data-cat="dev" data-i18n="catDev">
+              💻 개발/알고리즘/AI
+            </button>
+            <button type="button" class="category-choice-btn px-3 py-2 rounded-xl bg-surface-container border border-white/10 text-on-surface-variant text-xs font-semibold text-left transition-all" data-cat="lang" data-i18n="catLanguage">
+              🌍 어학/자격증/취준
+            </button>
+            <button type="button" class="category-choice-btn px-3 py-2 rounded-xl bg-surface-container border border-white/10 text-on-surface-variant text-xs font-semibold text-left transition-all" data-cat="general" data-i18n="catGeneral">
+              ⚡ 자유 순공 집중
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-white mb-1" data-i18n="inputRoomDescLabel">목표 및 자습실 규칙</label>
+          <input type="text" id="newRoomDesc" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-lowest border border-white/10 text-xs text-white placeholder:text-on-surface-variant focus:outline-none focus:border-secondary" data-i18n-placeholder="inputRoomDescPlaceholder" placeholder="예: 순공 8시간 달성, 스마트폰 딴짓 금지, 카메라 ON" />
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <button id="btnCancelCreateRoom" class="flex-1 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-highest text-on-surface-variant text-xs font-semibold transition-all" data-i18n="btnCancel">
+          취소
+        </button>
+        <button id="btnSubmitCreateRoom" class="flex-1 py-2.5 rounded-xl bg-secondary text-surface text-xs font-bold hover:brightness-110 shadow-lg shadow-secondary/20 transition-all flex items-center justify-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">add_circle</span>
+          <span data-i18n="btnSubmitCreateRoom">자습실 개설 완료</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 7-4. 친구 초대 모달 (INVITE ROOM MODAL)                         -->
+  <!-- ============================================================== -->
+  <div id="inviteRoomModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <h3 class="text-base font-headline font-bold text-white flex items-center gap-1.5" data-i18n="inviteModalTitle">
+            🔗 친구 초대하기
+          </h3>
+          <p class="text-xs text-on-surface-variant mt-0.5" data-i18n="inviteModalDesc">초대 링크를 친구에게 공유하면 같은 자습실에서 서로의 집중을 응원할 수 있습니다.</p>
+        </div>
+        <button id="btnCloseInviteModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Current Room Info Banner -->
+      <div class="p-3 rounded-xl bg-surface-container border border-white/5 flex items-center justify-between">
+        <div>
+          <span class="text-[10px] text-secondary font-semibold uppercase tracking-wider block">CURRENT ROOM</span>
+          <h4 id="inviteModalRoomTitle" class="text-xs font-bold text-white mt-0.5">타이베이 & 서울 고강도 자습실 #04</h4>
+        </div>
+        <span class="px-2 py-0.5 rounded-full bg-secondary/10 border border-secondary/20 text-[10px] text-secondary font-mono">LIVE</span>
+      </div>
+
+      <!-- One-Click Invite URL -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-white" data-i18n="inviteUrlLabel">원클릭 자동입장 초대 링크</label>
+        <div class="flex gap-2">
+          <input type="text" id="inviteRoomUrl" readonly class="flex-1 px-3.5 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-xs text-indigo-300 font-mono select-all focus:outline-none" />
+          <button id="btnCopyInviteUrl" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shrink-0 flex items-center gap-1 shadow-sm">
+            <span class="material-symbols-outlined text-[15px]">content_copy</span>
+            <span data-i18n="btnCopyInviteLink">링크 복사</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Invite Code -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-white" data-i18n="inviteCodeLabel">자습실 고유 초대 코드</label>
+        <div class="flex gap-2">
+          <input type="text" id="inviteRoomCode" readonly class="w-36 px-3.5 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-xs text-secondary font-mono font-bold tracking-wider select-all focus:outline-none" />
+          <button id="btnCopyInviteCode" class="px-3 py-2 rounded-xl bg-surface-container hover:bg-surface-container-highest border border-white/10 text-xs font-semibold text-white transition-all flex items-center gap-1">
+            <span class="material-symbols-outlined text-[15px]">content_copy</span>
+            <span data-i18n="btnCopyInviteCode">코드 복사</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Share Template Preview -->
+      <div class="p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs text-indigo-200">
+        <span class="text-[10px] text-indigo-400 font-semibold block mb-1">💬 메신저(카카오톡/라인) 전송 텍스트:</span>
+        <p id="inviteSharePreview" class="text-[11px] leading-relaxed text-indigo-100/90"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 7-2. 동료 집중 현황 & 응원하기 모달 (PEER CHEER MODAL)           -->
+  <!-- ============================================================== -->
+  <div id="peerModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <h3 class="text-sm font-headline font-bold text-white flex items-center gap-1.5" data-i18n="peerCheerModalTitle">
+          동료 집중 현황 & 응원하기
+        </h3>
+        <button id="btnClosePeerModal" class="text-on-surface-variant hover:text-white">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Peer Profile -->
+      <div class="flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full ring-4 ring-secondary/40 overflow-hidden mb-2 relative">
+          <img id="peerModalAvatar" class="w-full h-full object-cover" src=""/>
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-secondary rounded-full border-2 border-surface"></span>
+        </div>
+        <h4 id="peerModalName" class="text-base font-bold text-white">-</h4>
+        <span id="peerModalOrg" class="text-xs text-on-surface-variant mt-0.5">-</span>
+      </div>
+
+      <!-- Real-time metrics -->
+      <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/5 text-xs font-mono">
+        <div>
+          <span class="text-on-surface-variant text-[10px] block" data-i18n="peerPureFocusLabel">PURE FOCUS</span>
+          <strong id="peerModalMinutes" class="text-white text-sm">-</strong>
+        </div>
+        <div>
+          <span class="text-on-surface-variant text-[10px] block" data-i18n="peerPostureRateLabel">POSTURE RATE</span>
+          <strong id="peerModalPosture" class="text-secondary text-sm">-</strong>
+        </div>
+      </div>
+
+      <!-- Cheer Action Buttons -->
+      <div class="pt-2 border-t border-white/5 space-y-2">
+        <span class="text-[11px] text-on-surface-variant block mb-1" data-i18n="peerCheerSubtitle">실시간 응원 스티커 보내기</span>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <button class="btn-cheer py-2 rounded-xl bg-surface-container-highest hover:bg-surface-container border border-white/5 text-white flex flex-col items-center gap-1 transition-all" data-cheer-key="btnCheerShortClap">
+            <span class="text-lg">👏</span>
+            <span data-i18n="btnCheerShortClap">👏 박수</span>
+          </button>
+          <button class="btn-cheer py-2 rounded-xl bg-surface-container-highest hover:bg-surface-container border border-white/5 text-white flex flex-col items-center gap-1 transition-all" data-cheer-key="btnCheerShortFire">
+            <span class="text-lg">🔥</span>
+            <span data-i18n="btnCheerShortFire">🔥 열정</span>
+          </button>
+          <button class="btn-cheer py-2 rounded-xl bg-surface-container-highest hover:bg-surface-container border border-white/5 text-white flex flex-col items-center gap-1 transition-all" data-cheer-key="btnCheerShortCoffee">
+            <span class="text-lg">☕</span>
+            <span data-i18n="btnCheerShortCoffee">☕ 커피</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 8. APP 사용법 가이드 모달 (3-Step Quick Onboarding Guide)        -->
+  <!-- ============================================================== -->
+  <div id="guideModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <h3 class="text-base font-headline font-bold text-white flex items-center gap-2">
+          <span class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <span class="material-symbols-outlined text-lg">help</span>
+          </span>
+          <span data-i18n="guideModalTitle">DeepFocus 초간단 3단계 사용법</span>
+        </h3>
+        <button id="btnCloseGuideModal" class="text-on-surface-variant hover:text-white transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <!-- Step 1 -->
+        <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-white/5 flex gap-3 items-start">
+          <div class="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">
+            1
+          </div>
+          <div>
+            <h4 class="font-bold text-white mb-1" data-i18n="guideStep1Title">1. 카메라 연결 (Zero-Trust)</h4>
+            <p class="text-on-surface-variant leading-relaxed" data-i18n="guideStep1Desc">
+              웹캠 또는 스마트폰 QR 스캔으로 연결하세요. 영상은 외부 서버로 전송되지 않고 브라우저 내에서만 30 FPS로 안전하게 처리됩니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-white/5 flex gap-3 items-start">
+          <div class="w-8 h-8 rounded-lg bg-secondary/20 text-secondary flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">
+            2
+          </div>
+          <div>
+            <h4 class="font-bold text-white mb-1" data-i18n="guideStep2Title">2. 0초부터 타이머 시작</h4>
+            <p class="text-on-surface-variant leading-relaxed" data-i18n="guideStep2Desc">
+              [공부 시작]을 누르면 바른 자세를 유지하는 동안만 순수 집중 시간이 카운트업됩니다. 자세가 무너지면 타이머가 일시정지됩니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="p-3.5 rounded-xl bg-surface-container-lowest border border-white/5 flex gap-3 items-start">
+          <div class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">
+            3
+          </div>
+          <div>
+            <h4 class="font-bold text-white mb-1" data-i18n="guideStep3Title">3. 자세 교정 & SNS 바이럴 인증</h4>
+            <p class="text-on-surface-variant leading-relaxed" data-i18n="guideStep3Desc">
+              거북목 발생 시 시야 블러 경고가 뜨며 10초 스트레칭으로 피로를 리셋할 수 있습니다. 공부 마감 후 9:16 Shorts 카드로 인스타에 자랑하세요!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button id="btnDismissGuideModal" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:brightness-110 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all" data-i18n="guideCloseBtn">
+        확인하고 시작하기
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 9. 목표 & D-Day 설정 모달                                       -->
+  <!-- ============================================================== -->
+  <div id="goalModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-surface-container-high border border-white/10 rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <h3 class="text-sm font-headline font-bold text-white flex items-center gap-2">
+          <span>🎯</span>
+          <span data-i18n="editGoalModalTitle">🎯 나의 목표 & D-Day 설정</span>
+        </h3>
+        <button id="btnCloseGoalModal" class="text-on-surface-variant hover:text-white transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form id="goalForm" class="space-y-3">
+        <div>
+          <label class="text-[11px] text-on-surface-variant block mb-1" data-i18n="editGoalLabel">공부/독서 목표 이름</label>
+          <input type="text" id="inputTaskName" required placeholder="예: 오늘의 집중 공부 & 독서, 토익 900점" data-i18n-placeholder="editGoalPlaceholder" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400"/>
+        </div>
+        <div>
+          <label class="text-[11px] text-on-surface-variant block mb-1" data-i18n="editDdayLabel">목표 D-Day (예: D-12 또는 시험일)</label>
+          <input type="text" id="inputTaskGoal" required placeholder="예: D-12 코딩테스트, D-Day 목표 달성" data-i18n-placeholder="editDdayPlaceholder" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest border border-white/10 text-white text-xs focus:outline-none focus:border-emerald-400"/>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:brightness-110 text-slate-900 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all mt-2" data-i18n="editGoalSaveBtn">
+          저장하기
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/edge-ai.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

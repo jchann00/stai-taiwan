@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-TW"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>專注計時器 HUD - DeepFocus</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0c1322;color:#dce2f7;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#dce2f7', 'on-tertiary-fixed': '#001f26', 'surface-variant': '#2e3545', 'on-surface': '#dce2f7', 'error-container': '#93000a', 'outline-variant': '#464555', 'secondary-container': '#00a572', 'inverse-primary': '#4d44e3', 'surface-dim': '#0c1322', 'tertiary-fixed': '#acedff', 'on-tertiary': '#003640', 'on-secondary-fixed': '#002113', 'on-surface-variant': '#c7c4d8', 'on-secondary-container': '#00311f', 'tertiary': '#4cd7f6', 'on-background': '#dce2f7', 'primary-fixed-dim': '#c3c0ff', 'secondary-fixed-dim': '#4edea3', 'on-primary': '#1d00a5', 'outline': '#918fa1', 'on-error': '#690005', 'surface-container-high': '#232a3a', 'surface-container': '#191f2f', 'secondary': '#4edea3', 'surface-tint': '#c3c0ff', 'surface-bright': '#323949', 'inverse-on-surface': '#293040', 'surface-container-highest': '#2e3545', 'primary': '#c3c0ff', 'on-primary-fixed-variant': '#3323cc', 'on-secondary': '#003824', 'error': '#ffb4ab', 'on-primary-container': '#dad7ff', 'on-error-container': '#ffdad6', 'background': '#0c1322', 'primary-container': '#4f46e5', 'primary-fixed': '#e2dfff', 'surface': '#0c1322', 'on-tertiary-fixed-variant': '#004e5c', 'tertiary-container': '#006a7c', 'surface-container-low': '#141b2b', 'secondary-fixed': '#6ffbbe', 'on-tertiary-container': '#93e8ff', 'tertiary-fixed-dim': '#4cd7f6', 'on-primary-fixed': '#0f0069', 'on-secondary-fixed-variant': '#005236', 'surface-container-lowest': '#070e1d' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.5rem', 'gutter': '1rem', 'margin': '1.25rem', 'margin-desktop': '3rem', 'space-md': '1rem', 'gutter-tablet': '1.5rem', 'space-xs': '0.25rem', 'margin-tablet': '2rem', 'space-lg': '1.5rem', 'space-xl': '2.25rem' }, fontFamily: { 'badge-label': ['Inter'], 'headline-lg': ['Plus Jakarta Sans'], 'body-md': ['Inter'], 'timer-display-mobile': ['Space Grotesk'], 'headline-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'timer-display': ['Space Grotesk'], 'display-hero-mobile': ['Plus Jakarta Sans'], 'body-lg': ['Inter'], 'body-sm': ['Inter'], 'display-hero': ['Plus Jakarta Sans'], 'metric-label': ['Space Grotesk'] }, fontSize: { 'badge-label': ['11px', { lineHeight: '14px', letterSpacing: '0.02em', fontWeight: '600' }], 'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'timer-display-mobile': ['40px', { lineHeight: '48px', letterSpacing: '-0.03em', fontWeight: '600' }], 'headline-md': ['22px', { lineHeight: '30px', letterSpacing: '-0.01em', fontWeight: '600' }], 'headline-sm': ['18px', { lineHeight: '26px', fontWeight: '600' }], 'timer-display': ['56px', { lineHeight: '64px', letterSpacing: '-0.04em', fontWeight: '600' }], 'display-hero-mobile': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '700' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'display-hero': ['48px', { lineHeight: '56px', letterSpacing: '-0.03em', fontWeight: '700' }], 'metric-label': ['12px', { lineHeight: '16px', letterSpacing: '0.06em', fontWeight: '600' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="DeepFocus Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVcWTJnY5w5F4otKtP_wpq4c-YmdyFdercKOVcXayW0ptCQ9surBZt-F5IjOfhB26Po5FcKm3pvApeDj-dF20Hq3mcBJRtITuFXuT4_UALvjXQYqItQz0PSjPopMadM6vZaTPE0A6354ZTjhS8KLAWi6iiYU5HbmneK9GUg6CB2O4JpvMxOCyPlKo31K1fO-MO0vSilv4FN2PnOUgvPWEp0M-eb2VLYjTdRSIjftvsXE6Ena0B9ErU"/><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-on-surface truncate tracking-tight">DeepFocus</span><span class="font-badge-label text-badge-label text-on-surface-variant truncate">專注計時器 HUD</span></div></div><div class="flex items-center gap-space-sm shrink-0"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-[0_0_12px_rgba(245,158,11,0.12)]"><span class="text-xs select-none">🔥</span><span class="font-metric-label text-metric-label text-secondary font-semibold tracking-normal">連續 18 天</span></div><button aria-label="User Profile" class="flex items-center justify-center p-0.5 rounded-full ring-2 ring-primary-container/30 hover:ring-primary/60 transition-all focus:outline-none"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQv6fpewfa8_Ytys2pgHr1qW1bOmdSr7Ytt2kO_eM6eOQS5nhc4dfMXXqLFiJCtTf3G3aE2hwdaulOpmL6WkxhqSx3tzLSjMfk_fmS6qC9dRpcxy7iVHQhMwDRwITKIVF3XsxNxllw38V4NYuzye3BMKOvrP0ztDgSjatOVMEwdLMk26EPemJRkZg88RanT7LuRkBAYL6cQMyIlITLMdTXgTE1S1Y16RNYa7tJZmFcmUw9gHgzFeSv"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin pb-space-xl">
+<!-- Subtle Ambient Glow Behind Dynamic HUD -->
+<div class="relative w-full flex flex-col gap-space-md pt-space-xs">
+<!-- Top Floating Telemetry & Vision HUD Preview -->
+<div class="relative w-full rounded-xl bg-surface-container/90 backdrop-blur-xl p-space-md shadow-xl overflow-hidden transition-all duration-300">
+<!-- Glow aura for optimal alignment -->
+<div class="absolute -top-12 -right-12 w-36 h-36 bg-secondary/15 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Header row of vision preview -->
+<div class="flex items-center justify-between mb-space-sm relative z-10">
+<div class="flex items-center gap-space-xs">
+<span class="inline-flex items-center justify-center w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-badge-label text-badge-label text-secondary font-semibold tracking-wide">即時視覺感測運作中</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-surface-container-high/90">
+<span class="material-symbols-outlined text-[13px] text-tertiary">videocam</span>
+<span class="font-metric-label text-metric-label text-on-surface-variant font-medium">30 FPS • AI 偵測</span>
+</div>
+</div>
+<!-- Mini Vision Feed Simulation with Alignment HUD -->
+<div class="relative w-full h-32 rounded-lg bg-surface-container-lowest overflow-hidden flex items-center justify-center">
+<!-- Background stylized study camera view -->
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity scale-105 filter blur-[0.5px]" data-alt="A focused young adult studying at a wooden desk at night with a soft warm task lamp, ambient blue room lighting, ergonomic posture, cinematic depth of field, minimalist cozy study atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpKffxhyz0WlWtuDdlQB_NuBpOUc8T17XMAmfbYPD0yX6FMfvmfKwn2-uSGD9XtvBoywWL-fGjjwsItMayuNdXGyf2X0pYxm7dnJD-NqjkTjxKtxDt9rva535WALNnubfIBDfJAADuIopQh5nattGpwF4i_6M0wtoFKMg8Jz5A-i_YKGJ3WxiQeJOLBkSWQuINSp7wkeMNcIfAq2nnlQT5YzETBVmHEXTISryP4-8_3UCZ0663erwZ')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-surface-container-lowest/60"></div>
+<!-- Telemetry Horizon & Posture Guide Vector Grid -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" fill="none" preserveaspectratio="none" viewbox="0 0 320 128">
+<!-- Baseline shoulder horizon (aligned emerald) -->
+<line class="text-secondary/70" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5" x1="40" x2="280" y1="68" y2="68"></line>
+<!-- Dynamic Spine vertical guide -->
+<line class="text-secondary/60" stroke="currentColor" stroke-width="1.5" x1="160" x2="160" y1="20" y2="108"></line>
+<!-- Center crosshair node -->
+<circle class="text-secondary" cx="160" cy="68" fill="currentColor" r="4.5"></circle>
+<circle class="text-secondary/35" cx="160" cy="68" r="14" stroke="currentColor" stroke-dasharray="2 2" stroke-width="1"></circle>
+<!-- Head target bounding box -->
+<rect class="text-secondary/50" height="48" rx="6" stroke="currentColor" stroke-width="1" width="48" x="136" y="28"></rect>
+</svg>
+<!-- Dynamic telemetry pills on camera viewport -->
+<div class="absolute bottom-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-container-lowest/80 backdrop-blur-md">
+<span class="font-metric-label text-metric-label text-secondary font-bold">頸部傾斜 3°</span>
+<span class="font-badge-label text-badge-label text-on-surface-variant">• 正常</span>
+</div>
+<div class="absolute bottom-2 right-2 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-surface-container-lowest/80 backdrop-blur-md">
+<span class="font-metric-label text-metric-label text-tertiary font-bold">距離 55cm</span>
+<span class="font-badge-label text-badge-label text-on-surface-variant">• 最佳</span>
+</div>
+</div>
+<!-- Live Guard Status Ribbon -->
+<div class="mt-space-sm flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-base text-secondary shrink-0" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-body-sm text-body-sm text-on-surface truncate">已辨識正確坐姿 • 純專注時間累積中</span>
+</div>
+<span class="font-metric-label text-metric-label text-secondary shrink-0 font-semibold">+1秒/秒</span>
+</div>
+</div>
+<!-- Active Task Pill & Focus Goal Tag -->
+<div class="flex items-center justify-between px-space-xs">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md shadow-sm">
+<span class="text-xs">📊</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight text-sm">資料結構與演算法刷題</span>
+</div>
+<div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-container/20 text-primary">
+<span class="material-symbols-outlined text-xs">flag</span>
+<span class="font-metric-label text-metric-label font-bold">D-12 程式檢定</span>
+</div>
+</div>
+<!-- Central Zen Focus Timer Readout -->
+<div class="relative w-full rounded-2xl bg-surface-container-low/95 p-space-lg flex flex-col items-center justify-center text-center shadow-xl overflow-hidden">
+<!-- Ambient emerald/indigo radiant flow backdrop -->
+<div class="absolute inset-0 bg-radial from-secondary/10 via-primary-container/5 to-transparent pointer-events-none"></div>
+<!-- Top session micro metrics -->
+<div class="flex items-center gap-space-sm mb-2 relative z-10">
+<span class="font-metric-label text-metric-label uppercase tracking-widest text-on-surface-variant">CURRENT SESSION</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-badge-label text-badge-label text-secondary font-semibold">專注度 98.4%</span>
+</div>
+<!-- Main Giant Timer Display -->
+<div class="font-timer-display-mobile text-timer-display-mobile text-on-surface font-bold tracking-tight my-1 relative z-10 tabular-nums drop-shadow-[0_0_24px_rgba(78,222,163,0.18)]" id="mainTimer">
+        01:42:18
+      </div>
+<!-- Today's Cumulative Progress Bar against 5-Hour Goal -->
+<div class="w-full max-w-xs mt-space-sm relative z-10 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">今日純專注 <strong class="text-on-surface font-medium">3小時 25分</strong></span>
+<span class="font-metric-label text-metric-label text-secondary font-semibold">68% / 5小時</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full rounded-full bg-gradient-to-r from-primary-container via-primary to-secondary transition-all duration-500" style="width: 68%;"></div>
+</div>
+</div>
+<!-- Micro bio-feedback ticker -->
+<div class="mt-space-md inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">腰椎角度 102° • 骨盆壓力平衡正常</span>
+</div>
+</div>
+<!-- Anti-Fake-Study Guard Toggle Switch Module -->
+<div class="w-full rounded-xl bg-surface-container/80 p-space-md shadow-md flex items-center justify-between gap-space-sm transition-colors">
+<div class="flex items-start gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-headline-sm text-headline-sm text-on-surface text-sm font-semibold truncate">防止虛假學習 自動鎖定</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1">姿勢偏離時自動暫停計時並模糊畫面</span>
+</div>
+</div>
+<!-- Interactive Toggle -->
+<label class="relative inline-flex items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" id="autoLockToggle" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:bg-secondary-container transition-colors duration-200"></div>
+<div class="absolute left-1 top-1 w-4 h-4 bg-on-surface rounded-full transition-transform duration-200 peer-checked:translate-x-6 peer-checked:bg-on-secondary-container shadow-sm"></div>
+</label>
+</div>
+<!-- Motivational Posture Stability Insights Card -->
+<div class="w-full rounded-xl bg-surface-container-high/70 p-space-md shadow-sm flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-lg">psychology</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">近 45 分鐘維持正確坐姿率 94%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">烏龜頸風險 0 次偵測 • 處於大腦最佳供氧狀態</span>
+</div>
+</div>
+<!-- Primary Control Actions Dock -->
+<div class="grid grid-cols-3 gap-space-sm pt-space-xs">
+<!-- Pause Flow Button -->
+<button class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl bg-surface-container-high hover:bg-surface-bright active:scale-95 transition-all text-on-surface shadow-sm focus:outline-none" id="pauseBtn">
+<span class="material-symbols-outlined text-2xl text-on-surface mb-0.5">pause</span>
+<span class="font-badge-label text-badge-label font-medium">暫停</span>
+</button>
+<!-- Complete Session (Primary Flow CTA) -->
+<button class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl bg-primary-container hover:opacity-90 active:scale-95 transition-all text-on-primary shadow-lg shadow-primary-container/25 focus:outline-none" id="completeBtn">
+<span class="material-symbols-outlined text-2xl text-on-primary mb-0.5">check_circle</span>
+<span class="font-badge-label text-badge-label font-bold text-on-primary">完成階段</span>
+</button>
+<!-- Screen Shield / Zen OLED Saver Mode -->
+<button class="flex flex-col items-center justify-center py-3.5 px-2 rounded-xl bg-surface-container-high hover:bg-surface-bright active:scale-95 transition-all text-on-surface shadow-sm focus:outline-none" id="shieldBtn">
+<span class="material-symbols-outlined text-2xl text-tertiary mb-0.5">visibility_off</span>
+<span class="font-badge-label text-badge-label font-medium">螢幕保護</span>
+</button>
+</div>
+<!-- Active Shield Mode Full-Screen Overlay Simulation (Hidden by default) -->
+<div class="fixed inset-0 z-40 bg-surface-container-lowest/95 backdrop-blur-2xl flex flex-col items-center justify-center p-margin transition-opacity duration-300 opacity-0 pointer-events-none" id="shieldOverlay">
+<div class="flex flex-col items-center text-center gap-space-md">
+<div class="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary animate-pulse">
+<span class="material-symbols-outlined text-3xl">self_improvement</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">護眼放鬆模式</span>
+<span class="font-body-md text-body-md text-on-surface-variant max-w-xs">維持良好坐姿時計時器將持續累計。輕觸螢幕即可返回 HUD。</span>
+</div>
+<div class="font-timer-display-mobile text-timer-display-mobile text-secondary font-bold tabular-nums" id="shieldTimer">
+          01:42:18
+        </div>
+<button class="mt-space-lg px-6 py-2.5 rounded-full bg-surface-container-high text-on-surface font-body-md text-body-md shadow-md hover:bg-surface-bright active:scale-95 transition-all" id="exitShieldBtn">
+          返回 HUD 介面
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    let seconds = 6138; // 01:42:18 in seconds
+    let isRunning = true;
+    const timerEl = document.getElementById('mainTimer');
+    const shieldTimerEl = document.getElementById('shieldTimer');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const shieldBtn = document.getElementById('shieldBtn');
+    const shieldOverlay = document.getElementById('shieldOverlay');
+    const exitShieldBtn = document.getElementById('exitShieldBtn');
+    const autoLockToggle = document.getElementById('autoLockToggle');
+
+    function formatTime(totalSec) {
+      const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
+      const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
+      const s = String(totalSec % 60).padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    const interval = setInterval(() => {
+      if (isRunning) {
+        seconds++;
+        const formatted = formatTime(seconds);
+        if (timerEl) timerEl.textContent = formatted;
+        if (shieldTimerEl) shieldTimerEl.textContent = formatted;
+      }
+    }, 1000);
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => {
+        isRunning = !isRunning;
+        const iconSpan = pauseBtn.querySelector('.material-symbols-outlined');
+        const textSpan = pauseBtn.querySelector('span:last-child');
+        if (!isRunning) {
+          iconSpan.textContent = 'play_arrow';
+          textSpan.textContent = '繼續';
+          pauseBtn.classList.add('text-secondary');
+        } else {
+          iconSpan.textContent = 'pause';
+          textSpan.textContent = '暫停';
+          pauseBtn.classList.remove('text-secondary');
+        }
+      });
+    }
+
+    if (shieldBtn && shieldOverlay) {
+      shieldBtn.addEventListener('click', () => {
+        shieldOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        shieldOverlay.classList.add('opacity-100');
+      });
+    }
+
+    function closeShield() {
+      if (shieldOverlay) {
+        shieldOverlay.classList.add('opacity-0', 'pointer-events-none');
+        shieldOverlay.classList.remove('opacity-100');
+      }
+    }
+
+    if (exitShieldBtn) {
+      exitShieldBtn.addEventListener('click', closeShield);
+    }
+
+    if (shieldOverlay) {
+      shieldOverlay.addEventListener('click', (e) => {
+        if (e.target === shieldOverlay) closeShield();
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.45)]" data-active-classes="text-secondary bg-surface-container-high/60 shadow-[0_0_16px_rgba(78,222,163,0.16)]"><div class="grid grid-cols-4 items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center h-14 rounded-xl transition-all duration-200 group text-secondary bg-surface-container-high/60 shadow-[0_0_16px_rgba(78,222,163,0.16)]" data-path="focus-timer-hud" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">timer</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">專注階段</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="posture-analysis" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">accessibility_new</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">坐姿反饋</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="habits-streak" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">local_fire_department</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">習慣連續紀錄</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="study-room" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">groups</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">自習室</span></a></div></nav></body></html>

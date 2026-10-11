@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-TW"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>習慣連續紀錄 - DeepFocus</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0c1322;color:#dce2f7;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#dce2f7', 'on-tertiary-fixed': '#001f26', 'surface-variant': '#2e3545', 'on-surface': '#dce2f7', 'error-container': '#93000a', 'outline-variant': '#464555', 'secondary-container': '#00a572', 'inverse-primary': '#4d44e3', 'surface-dim': '#0c1322', 'tertiary-fixed': '#acedff', 'on-tertiary': '#003640', 'on-secondary-fixed': '#002113', 'on-surface-variant': '#c7c4d8', 'on-secondary-container': '#00311f', 'tertiary': '#4cd7f6', 'on-background': '#dce2f7', 'primary-fixed-dim': '#c3c0ff', 'secondary-fixed-dim': '#4edea3', 'on-primary': '#1d00a5', 'outline': '#918fa1', 'on-error': '#690005', 'surface-container-high': '#232a3a', 'surface-container': '#191f2f', 'secondary': '#4edea3', 'surface-tint': '#c3c0ff', 'surface-bright': '#323949', 'inverse-on-surface': '#293040', 'surface-container-highest': '#2e3545', 'primary': '#c3c0ff', 'on-primary-fixed-variant': '#3323cc', 'on-secondary': '#003824', 'error': '#ffb4ab', 'on-primary-container': '#dad7ff', 'on-error-container': '#ffdad6', 'background': '#0c1322', 'primary-container': '#4f46e5', 'primary-fixed': '#e2dfff', 'surface': '#0c1322', 'on-tertiary-fixed-variant': '#004e5c', 'tertiary-container': '#006a7c', 'surface-container-low': '#141b2b', 'secondary-fixed': '#6ffbbe', 'on-tertiary-container': '#93e8ff', 'tertiary-fixed-dim': '#4cd7f6', 'on-primary-fixed': '#0f0069', 'on-secondary-fixed-variant': '#005236', 'surface-container-lowest': '#070e1d' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.5rem', 'gutter': '1rem', 'margin': '1.25rem', 'margin-desktop': '3rem', 'space-md': '1rem', 'gutter-tablet': '1.5rem', 'space-xs': '0.25rem', 'margin-tablet': '2rem', 'space-lg': '1.5rem', 'space-xl': '2.25rem' }, fontFamily: { 'badge-label': ['Inter'], 'headline-lg': ['Plus Jakarta Sans'], 'body-md': ['Inter'], 'timer-display-mobile': ['Space Grotesk'], 'headline-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'timer-display': ['Space Grotesk'], 'display-hero-mobile': ['Plus Jakarta Sans'], 'body-lg': ['Inter'], 'body-sm': ['Inter'], 'display-hero': ['Plus Jakarta Sans'], 'metric-label': ['Space Grotesk'] }, fontSize: { 'badge-label': ['11px', { lineHeight: '14px', letterSpacing: '0.02em', fontWeight: '600' }], 'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'timer-display-mobile': ['40px', { lineHeight: '48px', letterSpacing: '-0.03em', fontWeight: '600' }], 'headline-md': ['22px', { lineHeight: '30px', letterSpacing: '-0.01em', fontWeight: '600' }], 'headline-sm': ['18px', { lineHeight: '26px', fontWeight: '600' }], 'timer-display': ['56px', { lineHeight: '64px', letterSpacing: '-0.04em', fontWeight: '600' }], 'display-hero-mobile': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '700' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'display-hero': ['48px', { lineHeight: '56px', letterSpacing: '-0.03em', fontWeight: '700' }], 'metric-label': ['12px', { lineHeight: '16px', letterSpacing: '0.06em', fontWeight: '600' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="DeepFocus Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVcWTJnY5w5F4otKtP_wpq4c-YmdyFdercKOVcXayW0ptCQ9surBZt-F5IjOfhB26Po5FcKm3pvApeDj-dF20Hq3mcBJRtITuFXuT4_UALvjXQYqItQz0PSjPopMadM6vZaTPE0A6354ZTjhS8KLAWi6iiYU5HbmneK9GUg6CB2O4JpvMxOCyPlKo31K1fO-MO0vSilv4FN2PnOUgvPWEp0M-eb2VLYjTdRSIjftvsXE6Ena0B9ErU"/><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-on-surface truncate tracking-tight">DeepFocus</span><span class="font-badge-label text-badge-label text-on-surface-variant truncate">習慣連續紀錄</span></div></div><div class="flex items-center gap-space-sm shrink-0"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-[0_0_12px_rgba(245,158,11,0.12)]"><span class="text-xs select-none">🔥</span><span class="font-metric-label text-metric-label text-secondary font-semibold tracking-normal">連續 18 天</span></div><button aria-label="使用者個人資料" class="flex items-center justify-center p-0.5 rounded-full ring-2 ring-primary-container/30 hover:ring-primary/60 transition-all focus:outline-none"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQv6fpewfa8_Ytys2pgHr1qW1bOmdSr7Ytt2kO_eM6eOQS5nhc4dfMXXqLFiJCtTf3G3aE2hwdaulOpmL6WkxhqSx3tzLSjMfk_fmS6qC9dRpcxy7iVHQhMwDRwITKIVF3XsxNxllw38V4NYuzye3BMKOvrP0ztDgSjatOVMEwdLMk26EPemJRkZg88RanT7LuRkBAYL6cQMyIlITLMdTXgTE1S1Y16RNYa7tJZmFcmUw9gHgzFeSv"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin space-y-space-lg pb-10">
+<!-- TOP STREAK HERO CARD -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-high p-space-lg shadow-xl">
+<!-- Ambient Glow Backdrops -->
+<div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-secondary-container/20 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-8 -left-8 w-36 h-36 rounded-full bg-primary-container/20 blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<!-- Flame Badge with Subtle Heartbeat Pulse -->
+<div class="relative flex items-center justify-center w-24 h-24 mb-space-sm">
+<div class="absolute inset-0 rounded-full bg-gradient-to-tr from-secondary-container/30 to-tertiary/20 blur-md animate-pulse"></div>
+<div class="relative flex items-center justify-center w-20 h-20 rounded-full bg-surface-container-highest shadow-[0_0_24px_rgba(78,222,163,0.25)]">
+<span class="text-4xl select-none transform hover:scale-110 transition-transform duration-300">🔥</span>
+</div>
+<div class="absolute -bottom-1 px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary font-badge-label text-badge-label shadow-sm">
+          LEVEL 4
+        </div>
+</div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-secondary font-metric-label text-metric-label mb-2">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+<span>前 8% 的專注達人</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-1">
+        已連續達成 18 天！
+      </h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs">
+        比昨天更加沈著，保持屬於自己的穩定節奏。今天也無需擔心倦怠，安心前行。
+      </p>
+<!-- Micro Milestone Tracker -->
+<div class="w-full mt-space-md pt-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-badge-label text-badge-label mb-1.5 px-1">
+<span>下個里程碑 (21天：養成習慣)</span>
+<span class="text-secondary font-metric-label text-metric-label">倒數 3 天</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary-container via-secondary to-tertiary rounded-full transition-all duration-700" style="width: 85.7%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- STREAK FREEZE DEFENSE SECTION (NON-PUNITIVE GAMIFICATION) -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-surface-container to-surface-container-high p-space-md shadow-lg">
+<!-- Soft Cyan Frost Aura -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-tertiary-container/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col space-y-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="flex items-center justify-center w-10 h-10 rounded-lg bg-tertiary-container/30 text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">ac_unit</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface">連續紀錄防凍護盾 (Streak Freeze)</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary/15 text-tertiary font-badge-label text-badge-label">保護中</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              忙碌或身體微恙時，能安心保護您的連續達成紀錄。
+            </p>
+</div>
+</div>
+</div>
+<!-- Shield Pod & Controls -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-lowest/80 backdrop-blur-md">
+<div class="flex items-center gap-2">
+<!-- Crystal Freeze Token Pod -->
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-tertiary-container/40 shadow-[0_0_12px_rgba(76,215,246,0.15)]">
+<span class="text-sm">🛡️</span>
+<span class="font-metric-label text-metric-label text-tertiary-fixed font-bold">目前持有：剩餘 2 次</span>
+</div>
+</div>
+<!-- Protection Auto-switch -->
+<label class="relative inline-flex items-center cursor-pointer select-none">
+<input checked="" class="sr-only peer" id="freezeToggle" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary-container"></div>
+<span class="ml-2 font-badge-label text-badge-label text-on-surface" id="freezeStateLabel">自動防護啟用</span>
+</label>
+</div>
+<!-- Mindful Recharging Action -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-base text-secondary">spa</span>
+<span>週末休息券 每週一自動恢復 1 次</span>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-variant hover:bg-surface-bright text-on-surface font-badge-label text-badge-label transition-colors" id="rechargeModalBtn">
+          休息券補給站
+        </button>
+</div>
+</div>
+</div>
+<!-- DAILY GOAL TELEMETRY CARD -->
+<div class="rounded-xl bg-surface-container p-space-lg shadow-md">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">今日專注旅程</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">以每日建議目標 4 小時為準</p>
+</div>
+<span class="font-metric-label text-metric-label px-2.5 py-1 rounded-full bg-primary-container/20 text-primary">已完成 85%</span>
+</div>
+<div class="flex items-center gap-space-lg">
+<!-- Lightweight Inline SVG Dual Progress Ring -->
+<div class="relative flex items-center justify-center shrink-0 w-28 h-28">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background track -->
+<circle class="text-surface-variant/40" cx="50" cy="50" fill="transparent" r="42" stroke="currentColor" stroke-width="7"></circle>
+<!-- Active Focus Progress Ring (85%) -->
+<circle class="text-secondary transition-all duration-1000" cx="50" cy="50" fill="transparent" r="42" stroke="currentColor" stroke-dasharray="263.89" stroke-dashoffset="39.58" stroke-linecap="round" stroke-width="7"></circle>
+<!-- Posture Aligned Sub-Ring (70%) -->
+<circle class="text-tertiary transition-all duration-1000" cx="50" cy="50" fill="transparent" r="32" stroke="currentColor" stroke-dasharray="201.06" stroke-dashoffset="60.31" stroke-linecap="round" stroke-width="5"></circle>
+</svg>
+<div class="absolute flex flex-col items-center text-center">
+<span class="font-timer-display-mobile text-xl text-on-surface leading-none font-bold">3h 25m</span>
+<span class="font-badge-label text-badge-label text-on-surface-variant mt-0.5">/ 4h</span>
+</div>
+</div>
+<!-- Micro Biometric Stats Breakdown -->
+<div class="flex-1 flex flex-col space-y-space-sm min-w-0">
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">良好坐姿</span>
+</div>
+<span class="font-metric-label text-metric-label text-on-surface shrink-0 font-bold">2小時 50分</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2 h-2 rounded-full bg-tertiary shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">頸肩舒展</span>
+</div>
+<span class="font-metric-label text-metric-label text-on-surface shrink-0 font-bold">3次 完成</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2 h-2 rounded-full bg-primary shrink-0"></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">坐姿穩定度</span>
+</div>
+<span class="font-metric-label text-metric-label text-secondary shrink-0 font-bold">94分 (優秀)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- MONTHLY STREAK GEM HEATMAP CALENDAR -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">calendar_month</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">5月 專注寶石日曆</h3>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-badge-label text-badge-label">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="mr-2">專注成功</span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>凍結防護</span>
+</div>
+</div>
+<!-- Calendar Grid Headers -->
+<div class="grid grid-cols-7 gap-1 text-center font-metric-label text-metric-label text-on-surface-variant py-1">
+<div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+</div>
+<!-- Calendar 7-column Matrix with Gems -->
+<div class="grid grid-cols-7 gap-1.5 text-center pt-1 font-metric-label text-metric-label" id="calendarMatrix">
+<!-- Week 1 -->
+<div class="p-2 rounded-lg text-outline-variant bg-surface-container-lowest/30">27</div>
+<div class="p-2 rounded-lg text-outline-variant bg-surface-container-lowest/30">28</div>
+<div class="p-2 rounded-lg text-outline-variant bg-surface-container-lowest/30">29</div>
+<div class="p-2 rounded-lg text-outline-variant bg-surface-container-lowest/30">30</div>
+<!-- May 1 ~ 3: Streak Days -->
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold group">
+        1
+        <span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span>
+</div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">
+        2
+        <span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span>
+</div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">
+        3
+        <span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span>
+</div>
+<!-- Week 2: May 4 ~ 10 -->
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">4<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">5<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">6<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">7<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<!-- Freeze shield used day (May 8) -->
+<div class="relative p-2 rounded-lg bg-tertiary-container/40 text-tertiary font-bold" title="以連續紀錄防凍護盾保護的日子">
+        8
+        <span class="absolute top-1 right-1 text-[8px]">❄️</span>
+</div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">9<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">10<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<!-- Week 3: May 11 ~ 17 -->
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">11<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">12<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">13<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">14<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">15<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">16<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<div class="relative p-2 rounded-lg bg-secondary-container/30 text-secondary font-bold">17<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary"></span></div>
+<!-- Week 4: May 18 (Today: 18th day) ~ May 24 -->
+<div class="relative p-2 rounded-lg bg-secondary text-on-secondary font-bold shadow-[0_0_12px_rgba(78,222,163,0.4)] ring-2 ring-secondary/50">
+        18
+        <span class="absolute -top-1 -right-1 text-[9px]">✨</span>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant">19</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant">20</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant">21</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant">22</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant">23</div>
+<div class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant">24</div>
+</div>
+</div>
+<!-- STRESS-FREE PEER SUPPORT CIRCLE (NO CUT-THROAT LEADERBOARD) -->
+<div class="rounded-xl bg-surface-container p-space-md shadow-md">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">groups</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">小組鼓勵讚賞榜</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">不互相競爭，共同守護彼此步調的深度學習小組 (6人)</p>
+</div>
+</div>
+<!-- Private Mode Toggle -->
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface-variant text-badge-label font-badge-label transition-colors" id="privacyModeBtn" title="不參與排名競爭，專注於自己的紀錄">
+<span class="material-symbols-outlined text-sm" id="privacyIcon">visibility</span>
+<span id="privacyLabel">分享模式</span>
+</button>
+</div>
+<!-- Peer Cheer List -->
+<div class="flex flex-col space-y-2 mt-space-sm" id="peerListContainer">
+<!-- Peer 1 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-high hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="relative shrink-0">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="A portrait of a smiling Korean male university student wearing round spectacles in a modern softly lit study room with deep cobalt background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMpBb-aQIruQZqa28iVGCe2KBwuSndsnfSqZ-nqYzPN3bm1Lq9VcTlZvfwr5V5OgmTFmF_BuceRr1GSD9cK2C5Pqq8RmFcZZKd0hz99Iyv5OWK7j4FPYDd9p8LiYDxsNwa3f04mPANGMBW-AlfNwxLgtWO0eo9FmKY7dZc0iJXcEtznzvcr_sg4CqKuOgOz3RC-0-wlLp0x2caGRLbXIPh4BLzJYHcya61Kdm-fthdqp1wP-uuM8wn"/>
+<span class="absolute -bottom-1 -right-1 text-xs select-none">👑</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">敏宇</span>
+<span class="px-1.5 py-0.2 rounded bg-secondary/15 text-secondary font-badge-label text-badge-label">今日端正坐姿王</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">達成 0 次烏龜頸！連續 4 小時保持正確角度</span>
+</div>
+</div>
+<button aria-label="給予鼓勵" class="peer-cheer-btn shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-surface-container text-on-surface hover:text-secondary hover:bg-surface-variant transition-transform active:scale-90">
+          👏
+        </button>
+</div>
+<!-- Peer 2 (Current User Highlight) -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-primary-container/20 shadow-[0_0_12px_rgba(79,70,229,0.1)]">
+<div class="flex items-center gap-3 min-w-0">
+<div class="relative shrink-0">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="A warm aesthetic avatar of a focused young designer woman in navy hoodie sitting in front of a warm amber lamp in a clean cozy desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWVvhCCZrc05SXBR-uY9utI14Aoal3Vsq4WVSbR3uSh_S_FSCQeuQkdHctrOTb0SXuvApbewkBKSsX6zcAta2GoZOOBLGUgoWxrN3nQhWwhI-55armJNXGYKn_FMo5eHd2mguE_ok02lSDp_0Fsp-8ftibJiD7yPY-l_SLLH00S1mQSPzxF_BpIvQRP4oUogni1aEIcwmEQpO0n4DZHrR8Zfi8m2zmM_nC-OVIAqmiGk9VsWOWreQK"/>
+<span class="absolute -bottom-1 -right-1 text-xs select-none">🔥</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-body-md text-body-md text-primary font-bold truncate">我 (智秀)</span>
+<span class="px-1.5 py-0.2 rounded bg-primary/20 text-primary font-badge-label text-badge-label">連續守護者</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">連續第 18 天 • 達成 3小時 25分 專注</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-tertiary font-metric-label text-metric-label px-2 py-1 rounded-full bg-surface-container">
+<span>🛡️ 2</span>
+</div>
+</div>
+<!-- Peer 3 -->
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-container-high hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="relative shrink-0">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Close up avatar portrait of an earnest male programmer with casual headphones typing softly in a quiet library atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xPi_-OXE2zQYl0rSy2tbrkCK2peH_-vK-XMjwjmBmYeIU6CjDjJu46jS5cvdyzRFPo3YZj4JTsFX4hpv99nkHVDjisxdgeChNfZxIlRLuuhc86TMhVkTlHtccAXYlOEqwng9sGMXdRK0v0FI3js2JqVmu_TTFJXPxjUAvIfQsgKHxx1r1hw7-jHHyLcnowdiGmtskW0U6ex5-tsheYRJd8pznPrLVCHNrGohk986DlDAu7kRoHED"/>
+<span class="absolute -bottom-1 -right-1 text-xs select-none">🌱</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">泰英</span>
+<span class="px-1.5 py-0.2 rounded bg-tertiary/15 text-tertiary font-badge-label text-badge-label">已充分休息</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">充足睡眠後，預計明早元氣回歸！</span>
+</div>
+</div>
+<button aria-label="給予鼓勵" class="peer-cheer-btn shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-surface-container text-on-surface hover:text-tertiary hover:bg-surface-variant transition-transform active:scale-90">
+          ☕
+        </button>
+</div>
+</div>
+</div>
+<!-- MINDFUL INSPIRATION CORNER BANNER -->
+<div class="rounded-xl bg-surface-container-low p-space-md flex items-center gap-3">
+<div class="flex items-center justify-center w-10 h-10 rounded-full bg-secondary-container/20 text-secondary shrink-0">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+</div>
+<div class="min-w-0 flex-1">
+<h4 class="font-headline-sm text-headline-sm text-on-surface truncate">稍作歇息，努力的步伐從未停歇</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+        專注的價值不在於單日的完美，而在於可持續的從容心態。隨時準備好，再出發即可。
+      </p>
+</div>
+</div>
+<!-- DIALOG / RECHARGE POPUP (HIDDEN BY DEFAULT) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-container-lowest/70 backdrop-blur-md hidden transition-opacity" id="rechargeModal">
+<div class="w-full max-w-sm rounded-xl bg-surface-container-high p-space-lg shadow-2xl space-y-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-2xl">❄️</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">休息券補給站</h3>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1" id="closeModalBtn">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        疲憊或感到倦怠時，請安心好好休息。完成肩頸伸展任務或簡短的心得回顧，即可獲得防凍護盾。
+      </p>
+<div class="space-y-2">
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-surface-container hover:bg-surface-bright text-left transition-colors">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary">self_improvement</span>
+<div>
+<div class="font-body-md text-body-md text-on-surface font-semibold">5分鐘頸部舒緩伸展</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">+1 連續防護護盾 立即補充</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-surface-container hover:bg-surface-bright text-left transition-colors">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-tertiary">edit_note</span>
+<div>
+<div class="font-body-md text-body-md text-on-surface font-semibold">撰寫一行專注日記</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">+1 週末休息通行證 立即發放</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</button>
+</div>
+<button class="w-full py-2.5 rounded-lg bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-semibold hover:bg-primary-container/80 transition-colors" id="confirmCloseModal">
+        確認完成
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interaction handlers for Habit Dashboard
+  (function() {
+    // 1. Freeze toggle micro-copy update
+    const freezeToggle = document.getElementById('freezeToggle');
+    const freezeStateLabel = document.getElementById('freezeStateLabel');
+    if (freezeToggle && freezeStateLabel) {
+      freezeToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          freezeStateLabel.textContent = '自動防護啟用';
+          freezeStateLabel.classList.remove('text-on-surface-variant');
+          freezeStateLabel.classList.add('text-on-surface');
+        } else {
+          freezeStateLabel.textContent = '防護已暫停';
+          freezeStateLabel.classList.remove('text-on-surface');
+          freezeStateLabel.classList.add('text-on-surface-variant');
+        }
+      });
+    }
+
+    // 2. Peer support cheer buttons bounce reaction
+    const cheerButtons = document.querySelectorAll('.peer-cheer-btn');
+    cheerButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const originalText = this.innerHTML;
+        this.innerHTML = '❤️';
+        this.classList.add('scale-125');
+        setTimeout(() => {
+          this.classList.remove('scale-125');
+          this.innerHTML = originalText;
+        }, 800);
+      });
+    });
+
+    // 3. Privacy Mode Toggle
+    const privacyBtn = document.getElementById('privacyModeBtn');
+    const privacyIcon = document.getElementById('privacyIcon');
+    const privacyLabel = document.getElementById('privacyLabel');
+    const peerList = document.getElementById('peerListContainer');
+    let isPrivate = false;
+
+    if (privacyBtn && peerList) {
+      privacyBtn.addEventListener('click', () => {
+        isPrivate = !isPrivate;
+        if (isPrivate) {
+          privacyIcon.textContent = 'visibility_off';
+          privacyLabel.textContent = '隱私模式';
+          peerList.classList.add('opacity-40', 'blur-[1px]');
+        } else {
+          privacyIcon.textContent = 'visibility';
+          privacyLabel.textContent = '分享模式';
+          peerList.classList.remove('opacity-40', 'blur-[1px]');
+        }
+      });
+    }
+
+    // 4. Recharge Modal Handling
+    const modalBtn = document.getElementById('rechargeModalBtn');
+    const modal = document.getElementById('rechargeModal');
+    const closeModal = document.getElementById('closeModalBtn');
+    const confirmClose = document.getElementById('confirmCloseModal');
+
+    function toggleModal(show) {
+      if (!modal) return;
+      if (show) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    if (modalBtn) modalBtn.addEventListener('click', () => toggleModal(true));
+    if (closeModal) closeModal.addEventListener('click', () => toggleModal(false));
+    if (confirmClose) confirmClose.addEventListener('click', () => toggleModal(false));
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.45)]" data-active-classes="text-secondary bg-surface-container-high/60 shadow-[0_0_16px_rgba(78,222,163,0.16)]"><div class="grid grid-cols-4 items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="focus-timer-hud" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">timer</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">專注階段</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="posture-analysis" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">accessibility_new</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">坐姿反饋</span></a><a aria-current="page" class="flex flex-col items-center justify-center h-14 rounded-xl transition-all duration-200 group text-secondary bg-surface-container-high/60 shadow-[0_0_16px_rgba(78,222,163,0.16)]" data-path="habits-streak" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">local_fire_department</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">習慣連續紀錄</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="study-room" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">groups</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">自習室</span></a></div></nav></body></html>

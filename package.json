@@ -1,0 +1,31 @@
+{
+  "name": "stai-posture-platform",
+  "version": "1.0.0",
+  "description": "Posture-Driven Focus Platform with PayPal Checkout & Edge AI",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "sync:mcp": "node scripts/sync-paypal-mcp.js"
+  },
+  "keywords": [
+    "paypal",
+    "edge-ai",
+    "mediapipe",
+    "posture"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@paypal/paypal-server-sdk": "^2.5.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.1",
+    "qrcode": "^1.5.4",
+    "selfsigned": "^5.5.0"
+  }
+}

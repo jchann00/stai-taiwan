@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-TW"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>線上自習室 - DeepFocus</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#0c1322;color:#dce2f7;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'inverse-surface': '#dce2f7', 'on-tertiary-fixed': '#001f26', 'surface-variant': '#2e3545', 'on-surface': '#dce2f7', 'error-container': '#93000a', 'outline-variant': '#464555', 'secondary-container': '#00a572', 'inverse-primary': '#4d44e3', 'surface-dim': '#0c1322', 'tertiary-fixed': '#acedff', 'on-tertiary': '#003640', 'on-secondary-fixed': '#002113', 'on-surface-variant': '#c7c4d8', 'on-secondary-container': '#00311f', 'tertiary': '#4cd7f6', 'on-background': '#dce2f7', 'primary-fixed-dim': '#c3c0ff', 'secondary-fixed-dim': '#4edea3', 'on-primary': '#1d00a5', 'outline': '#918fa1', 'on-error': '#690005', 'surface-container-high': '#232a3a', 'surface-container': '#191f2f', 'secondary': '#4edea3', 'surface-tint': '#c3c0ff', 'surface-bright': '#323949', 'inverse-on-surface': '#293040', 'surface-container-highest': '#2e3545', 'primary': '#c3c0ff', 'on-primary-fixed-variant': '#3323cc', 'on-secondary': '#003824', 'error': '#ffb4ab', 'on-primary-container': '#dad7ff', 'on-error-container': '#ffdad6', 'background': '#0c1322', 'primary-container': '#4f46e5', 'primary-fixed': '#e2dfff', 'surface': '#0c1322', 'on-tertiary-fixed-variant': '#004e5c', 'tertiary-container': '#006a7c', 'surface-container-low': '#141b2b', 'secondary-fixed': '#6ffbbe', 'on-tertiary-container': '#93e8ff', 'tertiary-fixed-dim': '#4cd7f6', 'on-primary-fixed': '#0f0069', 'on-secondary-fixed-variant': '#005236', 'surface-container-lowest': '#070e1d' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-sm': '0.5rem', 'gutter': '1rem', 'margin': '1.25rem', 'margin-desktop': '3rem', 'space-md': '1rem', 'gutter-tablet': '1.5rem', 'space-xs': '0.25rem', 'margin-tablet': '2rem', 'space-lg': '1.5rem', 'space-xl': '2.25rem' }, fontFamily: { 'badge-label': ['Inter'], 'headline-lg': ['Plus Jakarta Sans'], 'body-md': ['Inter'], 'timer-display-mobile': ['Space Grotesk'], 'headline-md': ['Plus Jakarta Sans'], 'headline-sm': ['Plus Jakarta Sans'], 'timer-display': ['Space Grotesk'], 'display-hero-mobile': ['Plus Jakarta Sans'], 'body-lg': ['Inter'], 'body-sm': ['Inter'], 'display-hero': ['Plus Jakarta Sans'], 'metric-label': ['Space Grotesk'] }, fontSize: { 'badge-label': ['11px', { lineHeight: '14px', letterSpacing: '0.02em', fontWeight: '600' }], 'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '600' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'timer-display-mobile': ['40px', { lineHeight: '48px', letterSpacing: '-0.03em', fontWeight: '600' }], 'headline-md': ['22px', { lineHeight: '30px', letterSpacing: '-0.01em', fontWeight: '600' }], 'headline-sm': ['18px', { lineHeight: '26px', fontWeight: '600' }], 'timer-display': ['56px', { lineHeight: '64px', letterSpacing: '-0.04em', fontWeight: '600' }], 'display-hero-mobile': ['36px', { lineHeight: '44px', letterSpacing: '-0.02em', fontWeight: '700' }], 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'display-hero': ['48px', { lineHeight: '56px', letterSpacing: '-0.03em', fontWeight: '700' }], 'metric-label': ['12px', { lineHeight: '16px', letterSpacing: '0.06em', fontWeight: '600' }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.35)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="DeepFocus Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVcWTJnY5w5F4otKtP_wpq4c-YmdyFdercKOVcXayW0ptCQ9surBZt-F5IjOfhB26Po5FcKm3pvApeDj-dF20Hq3mcBJRtITuFXuT4_UALvjXQYqItQz0PSjPopMadM6vZaTPE0A6354ZTjhS8KLAWi6iiYU5HbmneK9GUg6CB2O4JpvMxOCyPlKo31K1fO-MO0vSilv4FN2PnOUgvPWEp0M-eb2VLYjTdRSIjftvsXE6Ena0B9ErU"/><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-on-surface truncate tracking-tight">DeepFocus</span><span class="font-badge-label text-badge-label text-on-surface-variant truncate">線上自習室</span></div></div><div class="flex items-center gap-space-sm shrink-0"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-[0_0_12px_rgba(245,158,11,0.12)]"><span class="text-xs select-none">🔥</span><span class="font-metric-label text-metric-label text-secondary font-semibold tracking-normal">連續 18 天</span></div><button aria-label="User Profile" class="flex items-center justify-center p-0.5 rounded-full ring-2 ring-primary-container/30 hover:ring-primary/60 transition-all focus:outline-none"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQv6fpewfa8_Ytys2pgHr1qW1bOmdSr7Ytt2kO_eM6eOQS5nhc4dfMXXqLFiJCtTf3G3aE2hwdaulOpmL6WkxhqSx3tzLSjMfk_fmS6qC9dRpcxy7iVHQhMwDRwITKIVF3XsxNxllw38V4NYuzye3BMKOvrP0ztDgSjatOVMEwdLMk26EPemJRkZg88RanT7LuRkBAYL6cQMyIlITLMdTXgTE1S1Y16RNYa7tJZmFcmUw9gHgzFeSv"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin pb-space-lg gap-space-md">
+<!-- Room Ambient Header Banner -->
+<div class="relative w-full rounded-xl bg-surface-container-high p-space-md shadow-md overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-primary-container/15 blur-2xl pointer-events-none"></div>
+<div class="absolute -left-4 -top-4 w-28 h-28 rounded-full bg-secondary-container/15 blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-space-xs">
+<div class="flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-metric-label text-metric-label text-secondary font-semibold">LIVE</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">42人 專注中</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-lg">volume_off</span>
+<span class="font-badge-label text-badge-label">靜音自習室</span>
+</div>
+</div>
+<div class="mt-1 flex flex-col">
+<h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">🌙 深夜圖書館 自習室</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">#軟體工程 #證照考試 #無鏡頭_自律專注</p>
+</div>
+<!-- Ambient Sound & Presence Bar -->
+<div class="mt-2 pt-2 flex items-center justify-between bg-surface-container-lowest/60 rounded-lg px-3 py-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-base">nest_eco_leaf</span>
+<span class="font-body-sm text-body-sm text-on-surface">正在播放雨聲白噪音</span>
+</div>
+<button class="font-badge-label text-badge-label text-primary hover:text-on-primary-container transition-colors focus:outline-none" id="toggle-ambient">
+          調整音量與音效
+        </button>
+</div>
+</div>
+</div>
+<!-- Daily Check-in & Pledge Card -->
+<div class="w-full rounded-xl bg-surface-container p-space-md shadow-md relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary relative shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-2xl">verified</span>
+<span class="absolute -bottom-1 -right-1 text-xs">🌿</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-badge-label text-badge-label text-secondary bg-secondary-container/20 px-2 py-0.5 rounded-full">已連續簽到 12 天</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">08:30 完成打卡</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface mt-1 truncate">精通後端 API 架構設計</span>
+</div>
+</div>
+<div class="px-2.5 py-1.5 rounded-lg bg-surface-container-high flex flex-col items-center shrink-0">
+<span class="font-badge-label text-badge-label text-on-surface-variant">簽到進度</span>
+<span class="font-metric-label text-metric-label text-primary font-bold">12 / 30</span>
+</div>
+</div>
+<!-- Micro Streak Dots Strip -->
+<div class="mt-3.5 grid grid-cols-7 gap-1.5 items-center">
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">一</span>
+<div class="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">二</span>
+<div class="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">三</span>
+<div class="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">四</span>
+<div class="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">五</span>
+<div class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-sm font-bold">today</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">六</span>
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-xs">radio_button_unchecked</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="font-badge-label text-badge-label text-on-surface-variant">日</span>
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-xs">radio_button_unchecked</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Silent Cheer Toast Notification -->
+<div class="w-full rounded-xl bg-surface-container-high px-space-md py-space-sm flex items-center justify-between gap-space-sm shadow-md transition-all duration-300" id="toast-banner">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="text-xl shrink-0 select-none">🔥</span>
+<div class="flex flex-col min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-medium truncate">夥伴 <strong class="text-secondary font-semibold">寫程式的書妍</strong> 送來了火焰應援！</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">剛剛 • 感受到了彼此專注的溫暖陪伴</span>
+</div>
+</div>
+<button class="shrink-0 px-2.5 py-1 rounded-lg bg-surface-container text-primary font-badge-label text-badge-label hover:bg-primary-container hover:text-on-primary-container transition-all" onclick="handleSendReaction('書妍', '👏')">
+      回贈應援
+    </button>
+</div>
+<!-- Peer Silent Study Grid (Cam-Off Focus Cards) -->
+<div class="w-full flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-xl">psychology</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">一起全神貫注的夥伴們</span>
+</div>
+<span class="font-badge-label text-badge-label text-on-surface-variant">無需鏡頭，自在相伴</span>
+</div>
+<!-- Peer Cards 2x2 Grid -->
+<div class="grid grid-cols-2 gap-space-sm w-full">
+<!-- Peer 1: Seoyeon -->
+<div class="rounded-xl bg-surface-container p-3 flex flex-col justify-between shadow-sm relative group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-start justify-between gap-1">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A tranquil illustrative avatar icon of an Asian female student studying with soft purple headphones and quiet ambient room glow in dark mode aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1P5awDoAMorW5ZxYJUCYLiLwXY4EyALmIUsHmmlJdM1TnFMoV0PoKA0v5v0OiEUEUeqMbhYDMhnblwpg-Tx-d8RZaBD8LMZtsvy1eeJEV0JcVKthZBTYo8_vCYXwp2utm6_yz3Uma4XIPOg7MBd9sNmw0oNBVM6lb-7SPPSuVtU42EQecz7wA4uMrgJrYq5bXGCI9EMDTrdkeYtyfKMYfPqIb2l_DpjmBgCjGSZII62W77rQeuT07"/>
+</div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-secondary-container flex items-center justify-center text-[8px] text-on-secondary-container">🟢</span>
+</div>
+<div class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-badge-label text-badge-label flex items-center gap-0.5">
+<span>良好坐姿</span>
+</div>
+</div>
+<div class="mt-2.5 flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">寫程式的書妍</span>
+<span class="font-body-sm text-body-sm text-primary mt-0.5 truncate">📖 資訊工程專業研讀</span>
+</div>
+</div>
+<div class="mt-3 pt-2 bg-surface-container-lowest/40 rounded-lg p-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-badge-label text-badge-label">
+<span>專注時間</span>
+<span class="text-secondary font-metric-label text-metric-label font-bold">2h 10m</span>
+</div>
+<button class="w-full py-1 rounded bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface text-center font-badge-label text-badge-label transition-colors" onclick="handleSendReaction('寫程式的書妍', '🔥')">
+            🔥 無聲加油
+          </button>
+</div>
+</div>
+<!-- Peer 2: Jihoon -->
+<div class="rounded-xl bg-surface-container p-3 flex flex-col justify-between shadow-sm relative group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-start justify-between gap-1">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A warm illustrative avatar icon of a young Asian male student writing notes with focused calm expression in soft moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKnJ7eIc5P2BUsQBOwoK_kTlFrgVFiiUppoPa2qgy49DlHy8FeXpyrQqfjWbRbbWp5xv5xXw5HohG1tuUgiI-09HTFfBbjDJmBEzLteC-XptgNKhIsXg3UDV2KVXSQ4-oqQURbaVC16CkmE9L7syNWBjSoKDOZgdM92kugXPik3cXs5fa7y7a-VovlXNLJpLdeu3V3M4kMgnrTHLAxFPo8xGFnpEbF02jTrvDTp3bS11U2ZOmEyzna"/>
+</div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-secondary-container flex items-center justify-center text-[8px] text-on-secondary-container">🟢</span>
+</div>
+<div class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary font-badge-label text-badge-label flex items-center gap-0.5">
+<span>良好坐姿</span>
+</div>
+</div>
+<div class="mt-2.5 flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">國考考生志勳</span>
+<span class="font-body-sm text-body-sm text-tertiary mt-0.5 truncate">✍️ 歷屆考古題演練</span>
+</div>
+</div>
+<div class="mt-3 pt-2 bg-surface-container-lowest/40 rounded-lg p-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-badge-label text-badge-label">
+<span>專注時間</span>
+<span class="text-secondary font-metric-label text-metric-label font-bold">1h 40m</span>
+</div>
+<button class="w-full py-1 rounded bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface text-center font-badge-label text-badge-label transition-colors" onclick="handleSendReaction('國考考生志勳', '☕')">
+            ☕ 送杯咖啡
+          </button>
+</div>
+</div>
+<!-- Peer 3: Minho (Resting) -->
+<div class="rounded-xl bg-surface-container p-3 flex flex-col justify-between shadow-sm relative group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-start justify-between gap-1">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A minimalist avatar icon of a male developer taking a gentle neck stretch break in cozy twilight room lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUFamoeXv_cacu5pYsu2Ief9PaFlf2mPBaRveP1bcNRTq9AoI7QunU3ivailhW5Tlm0SOlSlSwTcxkP1wcY--hoMUoFpp-LwnRLzVl7NorXhg3Q-rgIT-0hMezf777f6TpjCPUBVMEZDnwKjDKlXQEpp_dH8o0SR5NWyCsHKtd2GoHjzAAW4ufUvZvBqTOyGS44a7MYYs3WK7JM-24lIZXOHYlXsCtPfQOADbLrOi2RYOAjgbjV9RR"/>
+</div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-surface-bright flex items-center justify-center text-[9px]">☕</span>
+</div>
+<div class="px-2 py-0.5 rounded-full bg-surface-container-high text-tertiary font-badge-label text-badge-label flex items-center gap-0.5">
+<span>休息 5分鐘</span>
+</div>
+</div>
+<div class="mt-2.5 flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">敏豪_Dev</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 truncate">☕ 伸展放鬆中</span>
+</div>
+</div>
+<div class="mt-3 pt-2 bg-surface-container-lowest/40 rounded-lg p-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-badge-label text-badge-label">
+<span>休息倒數</span>
+<span class="text-tertiary font-metric-label text-metric-label font-bold">04:12</span>
+</div>
+<button class="w-full py-1 rounded bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface text-center font-badge-label text-badge-label transition-colors" onclick="handleSendReaction('敏豪_Dev', '🧘')">
+            🧘 輕觸提醒伸展
+          </button>
+</div>
+</div>
+<!-- Peer 4: Suah -->
+<div class="rounded-xl bg-surface-container p-3 flex flex-col justify-between shadow-sm relative group hover:bg-surface-container-high transition-all">
+<div>
+<div class="flex items-start justify-between gap-1">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A cozy illustrated profile image of a young female college student setting up her study journal with soft candlelit background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbDeX4B_OPjObTDDpE2MXKM4HIlYLrcbWXitePIrMFv28IiiiOl5xq09d48nOcv-W4vMrs9ynIlzfVVew0A91CqTjHSA2EtD-w87l9zo9xUatEnp8jn0HMJv6oHPjIR1DCBNdx2IBaKu9_S53bKpPEez2xs0CXi5oWp3H-9LpIv785aY1v8fmqDDPjXbD8wMvEAKgbreUc06H8j0gx8JWv3Lo4NLVcwr0IXCNRpCECtbOi7rgXe7xy"/>
+</div>
+<span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary-container flex items-center justify-center text-[8px] text-on-primary-container">⚡</span>
+</div>
+<div class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary font-badge-label text-badge-label flex items-center gap-0.5">
+<span>剛開始專注</span>
+</div>
+</div>
+<div class="mt-2.5 flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate">秀雅</span>
+<span class="font-body-sm text-body-sm text-primary mt-0.5 truncate">🎯 專注暖身中</span>
+</div>
+</div>
+<div class="mt-3 pt-2 bg-surface-container-lowest/40 rounded-lg p-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-on-surface-variant font-badge-label text-badge-label">
+<span>階段開始</span>
+<span class="text-primary font-metric-label text-metric-label font-bold">15m</span>
+</div>
+<button class="w-full py-1 rounded bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface text-center font-badge-label text-badge-label transition-colors" onclick="handleSendReaction('秀雅', '👏')">
+            👏 歡迎掌聲
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Zero-Pressure One-Click Reactions Deck -->
+<div class="w-full rounded-xl bg-surface-container p-space-md shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface font-semibold">一鍵發送全自習室溫暖應援</span>
+<span class="font-badge-label text-badge-label text-on-surface-variant">無需聊天打字，透過貼圖互動傳遞心意</span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-surface-container-high hover:bg-surface-bright active:scale-95 transition-all text-center" onclick="handleRoomCheer('☕', '一杯咖啡')">
+<span class="text-2xl mb-1 select-none">☕</span>
+<span class="font-badge-label text-badge-label text-on-surface">一杯咖啡</span>
+</button>
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-surface-container-high hover:bg-surface-bright active:scale-95 transition-all text-center" onclick="handleRoomCheer('🔥', '熱血專注')">
+<span class="text-2xl mb-1 select-none">🔥</span>
+<span class="font-badge-label text-badge-label text-secondary">熱血專注</span>
+</button>
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-surface-container-high hover:bg-surface-bright active:scale-95 transition-all text-center" onclick="handleRoomCheer('👏', '掌聲鼓勵')">
+<span class="text-2xl mb-1 select-none">👏</span>
+<span class="font-badge-label text-badge-label text-primary">掌聲鼓勵</span>
+</button>
+<button class="flex flex-col items-center justify-center py-2.5 px-1 rounded-xl bg-surface-container-high hover:bg-surface-bright active:scale-95 transition-all text-center" onclick="handleRoomCheer('🧘', '坐姿輕提醒')">
+<span class="text-2xl mb-1 select-none">🧘</span>
+<span class="font-badge-label text-badge-label text-tertiary">坐姿輕提醒</span>
+</button>
+</div>
+</div>
+<!-- Daily Focus Progress & Share Card -->
+<div class="w-full rounded-xl bg-gradient-to-br from-surface-container-high to-surface-container p-space-md shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">insights</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface">今日我的專注總結</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">無社交負擔，輕鬆分享專注成果卡片</p>
+</div>
+</div>
+</div>
+<!-- Summary Metrics Split Box -->
+<div class="grid grid-cols-2 gap-space-sm pt-1">
+<div class="rounded-lg bg-surface-container-lowest/80 p-3 flex flex-col">
+<span class="font-badge-label text-badge-label text-on-surface-variant">純專注時間</span>
+<span class="font-timer-display-mobile text-timer-display-mobile text-primary font-bold tracking-tight mt-0.5">3h 25m</span>
+<span class="font-body-sm text-body-sm text-secondary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm">trending_up</span> 達成目標的 114%
+        </span>
+</div>
+<div class="rounded-lg bg-surface-container-lowest/80 p-3 flex flex-col">
+<span class="font-badge-label text-badge-label text-on-surface-variant">AI 坐姿評分</span>
+<span class="font-timer-display-mobile text-timer-display-mobile text-secondary font-bold tracking-tight mt-0.5">96<span class="text-headline-sm font-headline-sm text-on-surface-variant">分</span></span>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-sm text-secondary">check_circle</span> 烏龜頸警示僅 1 次
+        </span>
+</div>
+</div>
+<!-- Modal Trigger Button -->
+<button class="w-full mt-1 py-3 px-4 rounded-lg bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-on-primary-container font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-sm transition-all" id="open-report-btn">
+<span class="material-symbols-outlined text-xl">share</span>
+<span>分享今日專注報告卡片</span>
+</button>
+</div>
+<!-- Interactive Report Modal (Hidden by default) -->
+<div class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300" id="report-modal">
+<div class="w-full max-w-lg bg-surface-container-high rounded-t-2xl p-space-lg flex flex-col gap-space-md shadow-2xl transform translate-y-full transition-transform duration-300" id="report-modal-content">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-2xl select-none">🏆</span>
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">今日專注卡片</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface" id="close-report-btn">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Virtual Card Preview -->
+<div class="w-full rounded-xl bg-surface-container-lowest p-space-md relative overflow-hidden flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-badge-label text-badge-label text-primary">DEEPFOCUS STUDY CARD</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">今天也堅實地前進了一步</h3>
+</div>
+<span class="px-2 py-1 rounded bg-secondary-container/20 text-secondary font-metric-label text-metric-label">連續 12 天</span>
+</div>
+<div class="py-3 flex items-baseline justify-around bg-surface-container/60 rounded-lg">
+<div class="text-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">純專注</span>
+<p class="font-timer-display-mobile text-timer-display-mobile text-secondary font-bold">3h 25m</p>
+</div>
+<div class="w-px h-10 bg-outline-variant/30"></div>
+<div class="text-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">坐姿評分</span>
+<p class="font-timer-display-mobile text-timer-display-mobile text-tertiary font-bold">96分</p>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-center">
+          「走得慢也沒關係，為今天維持良好坐姿、踏實邁步的你喝采。」
+        </p>
+</div>
+<div class="flex gap-space-sm w-full">
+<button class="flex-1 py-3 rounded-lg bg-surface-container text-on-surface font-body-md text-body-md font-semibold hover:bg-surface-bright flex items-center justify-center gap-1.5 transition-colors" onclick="handleCopyCard()">
+<span class="material-symbols-outlined text-lg">content_copy</span>
+<span>複製圖片</span>
+</button>
+<button class="flex-1 py-3 rounded-lg bg-primary text-on-primary font-body-md text-body-md font-semibold hover:opacity-90 flex items-center justify-center gap-1.5 transition-colors" onclick="handleShareToRoom()">
+<span class="material-symbols-outlined text-lg">send</span>
+<span>分享至自習室</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Floating Toast Reaction Feedback Bubble -->
+<div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-surface-bright text-on-surface shadow-xl flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300" id="action-toast">
+<span class="text-base" id="toast-icon">✨</span>
+<span class="font-body-sm text-body-sm font-medium" id="toast-msg">已溫暖送達應援！</span>
+</div>
+</div>
+<script>
+  // Quick Ambient Mode Toggle
+  const ambientSounds = ['正在播放雨聲白噪音', '正在播放圖書館鉛筆書寫聲', '正在播放營火 ASMR', '正在播放深夜爵士 Lo-Fi'];
+  let soundIndex = 0;
+  const toggleAmbientBtn = document.getElementById('toggle-ambient');
+  if (toggleAmbientBtn) {
+    toggleAmbientBtn.addEventListener('click', () => {
+      soundIndex = (soundIndex + 1) % ambientSounds.length;
+      const soundText = toggleAmbientBtn.previousElementSibling.querySelector('span:last-child');
+      if (soundText) {
+        soundText.textContent = ambientSounds[soundIndex];
+      }
+      showToast('🎶', '背景音效已平順切換。');
+    });
+  }
+
+  // Report Modal Toggling
+  const reportModal = document.getElementById('report-modal');
+  const reportModalContent = document.getElementById('report-modal-content');
+  const openReportBtn = document.getElementById('open-report-btn');
+  const closeReportBtn = document.getElementById('close-report-btn');
+
+  function openReport() {
+    reportModal.classList.remove('opacity-0', 'pointer-events-none');
+    reportModalContent.classList.remove('translate-y-full');
+  }
+
+  function closeReport() {
+    reportModal.classList.add('opacity-0', 'pointer-events-none');
+    reportModalContent.classList.add('translate-y-full');
+  }
+
+  if (openReportBtn) openReportBtn.addEventListener('click', openReport);
+  if (closeReportBtn) closeReportBtn.addEventListener('click', closeReport);
+  if (reportModal) {
+    reportModal.addEventListener('click', (e) => {
+      if (e.target === reportModal) closeReport();
+    });
+  }
+
+  // Toast Functionality
+  function showToast(icon, message) {
+    const toast = document.getElementById('action-toast');
+    const toastIcon = document.getElementById('toast-icon');
+    const toastMsg = document.getElementById('toast-msg');
+
+    if (!toast) return;
+    toastIcon.textContent = icon;
+    toastMsg.textContent = message;
+
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2200);
+  }
+
+  // Silent Peer Reactions
+  function handleSendReaction(name, emoji) {
+    showToast(emoji, `已向 ${name} 送出安靜的 ${emoji} 應援！`);
+  }
+
+  function handleRoomCheer(emoji, label) {
+    showToast(emoji, `已向全自習室夥伴送出「${label}」！✨`);
+  }
+
+  function handleCopyCard() {
+    showToast('📋', '成果卡片已複製至剪貼簿。');
+    closeReport();
+  }
+
+  function handleShareToRoom() {
+    showToast('🌱', '專注報告已靜音分享給自習室夥伴。');
+    closeReport();
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.45)]" data-active-classes="text-secondary bg-surface-container-high/60 shadow-[0_0_16px_rgba(78,222,163,0.16)]"><div class="grid grid-cols-4 items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="focus-timer-hud" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">timer</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">專注階段</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="posture-analysis" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">accessibility_new</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">坐姿反饋</span></a><a class="flex flex-col items-center justify-center h-14 rounded-xl text-on-surface-variant hover:text-on-surface transition-all duration-200 group" data-path="habits-streak" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">local_fire_department</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">習慣連續紀錄</span></a><a aria-current="page" class="flex flex-col items-center justify-center h-14 rounded-xl transition-all duration-200 group text-secondary bg-surface-container-high/60 shadow-[0_0_16px_rgba(78,222,163,0.16)]" data-path="study-room" href="#"><span class="material-symbols-outlined text-2xl transition-transform group-hover:scale-105">groups</span><span class="font-badge-label text-badge-label mt-1 text-center font-medium">自習室</span></a></div></nav></body></html>
