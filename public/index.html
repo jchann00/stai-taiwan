@@ -1,9 +1,104 @@
 <!DOCTYPE html>
-<html class="dark" lang="ko">
+<html class="dark" lang="zh-TW">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-  <title data-i18n="docTitle">DeepFocus - Edge AI 자세 교정 및 집중도 플랫폼 (STAI)</title>
+  
+  <!-- 🚀 Immediate Taiwan/Global Language Bootstrap (Prevents any FOUC before rendering) -->
+  <script>
+    (function() {
+      try {
+        var urlParams = new URLSearchParams(window.location.search);
+        var qLang = urlParams.get('lang');
+        var lang = localStorage.getItem('stai_lang');
+        if (qLang) {
+          var l = qLang.toLowerCase();
+          if (l.includes('zh') || l === 'tw' || l.includes('hant')) lang = 'zh-TW';
+          else if (l.startsWith('ko')) lang = 'ko';
+          else if (l.startsWith('en')) lang = 'en';
+        }
+        if (!lang) {
+          var navLangs = navigator.languages || [navigator.language || navigator.userLanguage || ''];
+          for (var i = 0; i < navLangs.length; i++) {
+            var raw = (navLangs[i] || '').toLowerCase();
+            if (raw.includes('zh') || raw.includes('tw') || raw.includes('hk') || raw.includes('hant') || raw.includes('mo')) {
+              lang = 'zh-TW';
+              break;
+            }
+          }
+        }
+        if (!lang) {
+          try {
+            var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            if (tz === 'Asia/Taipei') lang = 'zh-TW';
+            else if (tz === 'Asia/Seoul') lang = 'ko';
+          } catch(e) {}
+        }
+        if (!lang) {
+          var navLangs2 = navigator.languages || [navigator.language || ''];
+          for (var j = 0; j < navLangs2.length; j++) {
+            var r = (navLangs2[j] || '').toLowerCase();
+            if (r.startsWith('ko')) { lang = 'ko'; break; }
+            if (r.startsWith('en')) { lang = 'en'; break; }
+          }
+        }
+        // 대만 시장 타겟 기본 언어: zh-TW (번체 중국어)
+        if (!lang) lang = 'zh-TW';
+
+        window.__BOOTSTRAP_LANG__ = lang;
+        document.documentElement.lang = lang;
+      } catch (err) {}
+    })();
+  </script>
+
+  <title data-i18n="docTitle">DeepFocus STAI - 線上姿勢矯正 AI 與專注自習室 | AI Posture Corrector</title>
+  
+  <!-- Global & Taiwan Multilingual SEO Meta Tags -->
+  <meta name="description" content="DeepFocus STAI 是專為知識工作者與考生設計的 Edge AI 姿勢矯正與線上自習室平台。無需安裝，透過視訊鏡頭即可即時偵測駝背與專注度，保護頸椎健康。Zero-Trust 本地端極速運算。"/>
+  <meta name="keywords" content="姿勢矯正 AI, 駝背 提醒, 線上自習室, 坐姿改善, AI Posture Corrector, Slouch Detection, Study With Me, Pomodoro Timer, 頸椎姿勢, 烏龜頸 檢測, 뽀모도로 자세교정"/>
+  <meta name="author" content="STAI Platform"/>
+  <meta name="robots" content="index, follow, max-image-preview:large"/>
+
+  <!-- Canonical & Multilingual Alternate Hreflang Tags -->
+  <link rel="canonical" href="https://stai-focus.netlify.app/"/>
+  <link rel="alternate" hreflang="zh-TW" href="https://stai-focus.netlify.app/?lang=zh-TW"/>
+  <link rel="alternate" hreflang="en" href="https://stai-focus.netlify.app/?lang=en"/>
+  <link rel="alternate" hreflang="ko" href="https://stai-focus.netlify.app/?lang=ko"/>
+  <link rel="alternate" hreflang="x-default" href="https://stai-focus.netlify.app/"/>
+
+  <!-- Open Graph / Facebook / LINE / Kakao / Discord Social Cards -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="DeepFocus STAI"/>
+  <meta property="og:title" content="DeepFocus STAI - 線上姿勢矯正 AI 與專注自習室 (Zero-Trust)"/>
+  <meta property="og:description" content="開啟瀏覽器鏡頭即時 30+ FPS 矯正駝背！純專注計時累計、防滑手機鎖定、多人虛擬自習室。完全在設備本機運算，零隱私洩漏。"/>
+  <meta property="og:url" content="https://stai-focus.netlify.app/"/>
+  <meta property="og:locale" content="zh_TW"/>
+  <meta property="og:locale:alternate" content="en_US"/>
+  <meta property="og:locale:alternate" content="ko_KR"/>
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="DeepFocus STAI - Edge AI Posture Corrector & Virtual Study Room"/>
+  <meta name="twitter:description" content="Webcam posture tracking and slouch detection at 30+ FPS. Stay upright, build unbreakable focus streaks, and study together globally."/>
+
+  <!-- Google Schema.org JSON-LD Structured Data for Rich Snippets -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DeepFocus STAI",
+    "alternateName": "STAI 姿勢矯正自習室",
+    "operatingSystem": "Web, iOS Safari, Android Chrome, Windows, macOS",
+    "applicationCategory": "HealthApplication, ProductivityApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "inLanguage": ["zh-TW", "en", "ko"],
+    "description": "Zero-trust edge AI posture tracking and real-time virtual study rooms for intense knowledge workers and students worldwide."
+  }
+  </script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>

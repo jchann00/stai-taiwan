@@ -955,7 +955,64 @@ const translations = {
 
 class I18nManager {
   constructor() {
-    this.currentLang = localStorage.getItem('stai_lang') || 'ko';
+    this.currentLang = this.detectInitialLanguage();
+  }
+
+  detectInitialLanguage() {
+    // 1. URL 쿼리 파라미터 우선 (?lang=zh-TW, ?lang=tw, ?lang=en, ?lang=ko)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const qLang = urlParams.get('lang');
+      if (qLang) {
+        const l = qLang.toLowerCase();
+        if (l.includes('zh') || l === 'tw' || l.includes('hant')) return 'zh-TW';
+        if (l.startsWith('ko')) return 'ko';
+        if (l.startsWith('en')) return 'en';
+      }
+    } catch (e) {}
+
+    // 2. 사용자가 이전에 직접 선택하여 저장한 설정
+    const saved = localStorage.getItem('stai_lang');
+    if (saved && translations[saved]) {
+      return saved;
+    }
+
+    // 3. 브라우저 언어 환경 조사 (대만/홍콩/번체중문 우선 감지)
+    try {
+      const navLangs = navigator.languages || [navigator.language || navigator.userLanguage || ''];
+      for (const raw of navLangs) {
+        if (!raw) continue;
+        const l = raw.toLowerCase();
+        if (l.includes('zh') || l.includes('tw') || l.includes('hk') || l.includes('hant') || l.includes('mo')) {
+          return 'zh-TW';
+        }
+      }
+    } catch (e) {}
+
+    // 4. 시스템 타임존 조사 (대만 사용자는 무조건 Asia/Taipei)
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz === 'Asia/Taipei') {
+        return 'zh-TW';
+      }
+      if (tz === 'Asia/Seoul') {
+        return 'ko';
+      }
+    } catch (e) {}
+
+    // 5. 기타 브라우저 언어 감지 (한국어 vs 영문/글로벌)
+    try {
+      const navLangs = navigator.languages || [navigator.language || ''];
+      for (const raw of navLangs) {
+        if (!raw) continue;
+        const l = raw.toLowerCase();
+        if (l.startsWith('ko')) return 'ko';
+        if (l.startsWith('en')) return 'en';
+      }
+    } catch (e) {}
+
+    // 6. 기본값: 대만 타겟 서비스이므로 zh-TW(번체 중국어) 기본 적용
+    return 'zh-TW';
   }
 
   t(key, params = {}) {

@@ -20,10 +20,17 @@ let timerInterval = null;
 let autoLockEnabled = true;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // 1. 다국어 즉시 전면 적용 (비동기 지연이나 실패 없이 최우선 실행)
-  const initialLang = localStorage.getItem('stai_lang') || 'ko';
+  // 1. 다국어 즉시 전면 적용 (대만 접속 시 zh-TW 번체 중국어 최우선 자동 적용)
+  const initialLang = window.i18n ? window.i18n.currentLang : 'zh-TW';
   if (window.i18n) {
     window.i18n.setLanguage(initialLang);
+  }
+
+  // 대만 사용자면 결제 통화를 TWD(NT$)로 자동 연동
+  if (initialLang === 'zh-TW') {
+    currentCurrency = 'TWD';
+  } else {
+    currentCurrency = 'USD';
   }
   initLanguageSwitcher();
   initNavigationTabs();
@@ -897,6 +904,18 @@ function initPayPalModal() {
       }
     });
   });
+
+  // 초기 통화 UI 상태 동기화 (대만일 경우 TWD 기본 활성화)
+  currBtns.forEach(b => {
+    if (b.getAttribute('data-curr') === currentCurrency) {
+      b.classList.add('active', 'bg-indigo-600', 'text-white');
+      b.classList.remove('text-on-surface-variant');
+    } else {
+      b.classList.remove('active', 'bg-indigo-600', 'text-white');
+      b.classList.add('text-on-surface-variant');
+    }
+  });
+  updateModalCurrencyPrices();
 
   // 3가지 플랜 선택 카드 (Starter, Pro, Clinic)
   const planOptions = document.querySelectorAll('.plan-option');
