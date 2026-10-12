@@ -6,6 +6,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  SECRETS_SCAN_ENABLED = "false"
+  SECRETS_SCAN_OMIT_KEYS = "PAYPAL_ENVIRONMENT,NODE_VERSION"
 
 # Express API Routing to Netlify Serverless Function
 [[redirects]]

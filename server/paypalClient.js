@@ -23,7 +23,7 @@ if (isConfigured) {
       oAuthClientId: clientId,
       oAuthClientSecret: clientSecret,
     },
-    environment: environmentMode === 'production' || environmentMode === 'live' 
+    environment: /^(prod|live)/i.test(String(environmentMode || ''))
       ? Environment.Production 
       : Environment.Sandbox,
   });
