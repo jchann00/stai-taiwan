@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://stai-focus.netlify.app/sitemap.xml
+Sitemap: https://deepfocus-ai.netlify.app/sitemap.xml
