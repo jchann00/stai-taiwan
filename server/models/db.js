@@ -27,9 +27,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const dbDir = path.dirname(fileURLToPath(import.meta.url));
+const DATA_DIR = path.join(dbDir, '..', 'data');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 
 // data 디렉토리 생성

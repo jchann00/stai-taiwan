@@ -11,8 +11,7 @@ import { getDbStatus } from './models/db.js';
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -21,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // 정적 프론트엔드 파일 제공 (로컬 환경 및 Standalone 서버용)
-const publicPath = path.join(__dirname, '..', 'public');
+const publicPath = path.join(appDir, '..', 'public');
 app.use(express.static(publicPath));
 
 // API 라우트 등록
